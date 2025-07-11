@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>감정카드 메이커</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+
+        .input-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .input-group {
+            margin-bottom: 28px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            height: 100px;
+            font-family: inherit;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .upload-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .upload-btn .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-btn .text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        .camera-section {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .camera-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        #cameraVideo {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .camera-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-capture {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            box-shadow: 0 6px 16px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+            color: white;
+            box-shadow: 0 6px 16px rgba(99, 110, 114, 0.3);
+        }
+
+        .camera-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        #capturedCanvas {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-preview {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.1) 2px,
+                rgba(255,255,255,0.1) 4px
+            );
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .card-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin: 0 auto 24px;
+            border: 4px solid white;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-emotion {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-name {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-situation {
+            font-size: 1.1rem;
+            color: #5a6c7d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-date {
+            font-size: 0.9rem;
+            color: #95a5a6;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+
+        .placeholder-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #e3e8ed 0%, #c8d4e0 100%);
+            border-radius: 16px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7c8ba1;
+            font-size: 1rem;
+            border: 4px solid white;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section {
+                padding: 24px;
+            }
+            
+            .upload-options {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .upload-btn {
+                max-width: none;
+                flex-direction: row;
+                justify-content: center;
+                padding: 16px;
+            }
+            
+            .upload-btn .icon {
+                margin-bottom: 0;
+                margin-right: 8px;
+                font-size: 1.5rem;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .camera-btn {
+                width: 200px;
+                justify-content: center;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ 감정카드 메이커</h1>
+            <p>나만의 특별한 감정카드를 만들어보세요</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="userName">👤 이름</label>
+                <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
+            </div>
+
+            <div class="input-group">
+                <label for="emotionName">💭 감정의 이름</label>
+                <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
+            </div>
+
+            <div class="input-group">
+                <label for="situation">📝 언제 이런 감정을 느끼나요?</label>
+                <textarea id="situation" placeholder="예: 친구들과 함께 놀 때, 좋은 성적을 받았을 때..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>🎨 나만의 그림 추가하기</label>
+                
+                <div class="upload-options">
+                    <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                        <div class="icon">📁</div>
+                        <div class="text">파일 선택</div>
+                    </div>
+                    <div class="upload-btn" onclick="startCamera()">
+                        <div class="icon">📷</div>
+                        <div class="text">사진 촬영</div>
+                    </div>
+                </div>
+
+                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">그림을 업로드하거나 사진을 촬영하세요</div>
+                    <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
+                    <input type="file" id="imageInput" accept="image/*">
+                </div>
+
+                <div class="camera-section" id="cameraSection">
+                    <div class="camera-container">
+                        <video id="cameraVideo" autoplay muted playsinline></video>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="camera-btn btn-capture" onclick="capturePhoto()">
+                            📸 사진 찍기
+                        </button>
+                        <button class="camera-btn btn-cancel" onclick="stopCamera()">
+                            ❌ 취소
+                        </button>
+                    </div>
+                </div>
+
+                <canvas id="capturedCanvas"></canvas>
+                <img id="previewImage" class="preview-image" style="display: none;">
+            </div>
+        </div>
+
+        <div class="card-preview">
+            <div class="card" id="emotionCard">
+                <div class="placeholder-image" id="cardImageContainer">
+                    <span>그림을 업로드해주세요</span>
+                </div>
+                <div class="card-emotion" id="cardEmotion">감정의 이름</div>
+                <div class="card-name" id="cardName">이름을 입력해주세요</div>
+                <div class="card-situation" id="cardSituation">언제 이런 감정을 느끼는지 적어보세요</div>
+                <div class="card-date" id="cardDate"></div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <div class="download-buttons">
+                <button class="btn btn-reset" onclick="resetForm()">
+                    🔄 새로 작성하기
+                </button>
+                <button class="btn btn-primary" onclick="downloadCard('png')">
+                    📱 이미지로 저장
+                </button>
+                <button class="btn btn-secondary" onclick="downloadCard('pdf')">
+                    📄 PDF로 저장
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        // 현재 날짜 설정
+        document.getElementById('cardDate').textContent = new Date().toLocaleDateString('ko-KR');
+
+        // 전역 변수
+        let cameraStream = null;
+
+        // 입력 필드 이벤트 리스너
+        document.getElementById('userName').addEventListener('input', function() {
+            const text = this.value || '이름을 입력해주세요';
+            document.getElementById('cardName').textContent = text;
+        });
+
+        document.getElementById('emotionName').addEventListener('input', function() {
+            const text = this.value || '감정의 이름';
+            document.getElementById('cardEmotion').textContent = text;
+        });
+
+        document.getElementById('situation').addEventListener('input', function() {
+            const text = this.value || '언제 이런 감정을 느끼는지 적어보세요';
+            document.getElementById('cardSituation').textContent = text;
+        });
+
+        // 이미지 업로드 처리
+        const imageInput = document.getElementById('imageInput');
+        const uploadArea = document.querySelector('.upload-area');
+        const previewImage = document.getElementById('previewImage');
+        const cardImageContainer = document.getElementById('cardImageContainer');
+
+        imageInput.addEventListener('change', handleImageUpload);
+
+        // 드래그 앤 드롭 처리
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageInput.files = files;
+                handleImageUpload();
+            }
+        });
+
+        function handleImageUpload() {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    applyImageToCard(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function applyImageToCard(imageSrc) {
+            // 미리보기 이미지 표시
+            previewImage.src = imageSrc;
+            previewImage.style.display = 'block';
+            
+            // 카드에 이미지 적용
+            cardImageContainer.innerHTML = `<img src="${imageSrc}" class="card-image" alt="업로드된 이미지">`;
+        }
+
+        // 카메라 기능
+        async function startCamera() {
+            try {
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user' // 전면 카메라 우선
+                    }
+                };
+
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = cameraStream;
+                
+                document.getElementById('cameraSection').style.display = 'block';
+                
+                // 스크롤을 카메라 섹션으로 이동
+                document.getElementById('cameraSection').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+
+            } catch (error) {
+                console.error('카메라 접근 오류:', error);
+                alert('카메라에 접근할 수 없습니다. 브라우저 설정을 확인해주세요.');
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('capturedCanvas');
+            const context = canvas.getContext('2d');
+
+            // 캔버스 크기를 비디오 크기에 맞춤
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // 비디오 프레임을 캔버스에 그리기
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 캔버스에서 이미지 데이터 가져오기
+            const imageDataUrl = canvas.toDataURL('image/png');
+
+            // 이미지를 카드에 적용
+            applyImageToCard(imageDataUrl);
+
+            // 카메라 종료
+            stopCamera();
+
+            // 성공 메시지
+            alert('📸 사진이 성공적으로 촬영되었습니다!');
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                // 모든 트랙 종료
+                cameraStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                cameraStream = null;
+            }
+
+            // 카메라 섹션 숨기기
+            document.getElementById('cameraSection').style.display = 'none';
+        }
+
+        // 새로 작성하기 기능
+        function resetForm() {
+            // 확인 대화상자
+            if (confirm('모든 내용을 지우고 새로 작성하시겠습니까?')) {
+                // 입력 필드 초기화
+                document.getElementById('userName').value = '';
+                document.getElementById('emotionName').value = '';
+                document.getElementById('situation').value = '';
+                document.getElementById('imageInput').value = '';
+
+                // 카드 내용 초기화
+                document.getElementById('cardName').textContent = '이름을 입력해주세요';
+                document.getElementById('cardEmotion').textContent = '감정의 이름';
+                document.getElementById('cardSituation').textContent = '언제 이런 감정을 느끼는지 적어보세요';
+
+                // 이미지 초기화
+                document.getElementById('previewImage').style.display = 'none';
+                document.getElementById('cardImageContainer').innerHTML = '<span>그림을 업로드해주세요</span>';
+
+                // 카메라 종료 (실행 중인 경우)
+                stopCamera();
+
+                // 성공 메시지
+                alert('✨ 새로운 감정카드를 작성할 준비가 완료되었습니다!');
+
+                // 맨 위로 스크롤
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // 다운로드 기능
+        async function downloadCard(format) {
+            const card = document.getElementById('emotionCard');
+            
+            try {
+                const canvas = await html2canvas(card, {
+                    scale: 2,
+                    backgroundColor: null,
+                    useCORS: true
+                });
+
+                if (format === 'png') {
+                    const link = document.createElement('a');
+                    link.download = `감정카드_${document.getElementById('emotionName').value || '나의감정'}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                } else if (format === 'pdf') {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 190;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                    pdf.save(`감정카드_${document.getElementById('emotionName').value || '나의감정'}.pdf`);
+                }
+            } catch (error) {
+                alert('다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');
+                console.error('Download error:', error);
+            }
+        }
+
+        // 페이지 종료 시 카메라 스트림 정리
+        window.addEventListener('beforeunload', () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
