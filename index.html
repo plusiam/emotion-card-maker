@@ -89,6 +89,88 @@
             font-family: inherit;
         }
 
+        /* 배경 테마 선택기 스타일 */
+        .background-selector {
+            margin-bottom: 28px;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .theme-option {
+            height: 60px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .theme-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .theme-option.active {
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 감정별 배경 테마 */
+        .theme-joy {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #d35400;
+        }
+
+        .theme-love {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+        }
+
+        .theme-calm {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        .theme-energy {
+            background: linear-gradient(135deg, #ff7675 0%, #e17055 100%);
+        }
+
+        .theme-nature {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+        }
+
+        .theme-creative {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+        }
+
+        .theme-warm {
+            background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+        }
+
+        .theme-cool {
+            background: linear-gradient(135deg, #81ecec 0%, #00b894 100%);
+        }
+
+        .theme-sunset {
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%);
+        }
+
+        .theme-ocean {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
+        }
+
         .upload-options {
             display: flex;
             gap: 16px;
@@ -370,6 +452,48 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* 감정별 카드 테마 */
+        .card.theme-joy {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        }
+
+        .card.theme-love {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+        }
+
+        .card.theme-calm {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        .card.theme-energy {
+            background: linear-gradient(135deg, #ff7675 0%, #e17055 100%);
+        }
+
+        .card.theme-nature {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+        }
+
+        .card.theme-creative {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+        }
+
+        .card.theme-warm {
+            background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+        }
+
+        .card.theme-cool {
+            background: linear-gradient(135deg, #81ecec 0%, #00b894 100%);
+        }
+
+        .card.theme-sunset {
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%);
+        }
+
+        .card.theme-ocean {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
         }
 
         .card::before {
@@ -413,32 +537,36 @@
             margin-bottom: 8px;
             position: relative;
             z-index: 1;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.5);
         }
 
         .card-name {
             font-size: 1rem;
-            color: #7f8c8d;
+            color: #34495e;
             font-weight: 500;
             margin-bottom: 16px;
             position: relative;
             z-index: 1;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
         }
 
         .card-situation {
             font-size: 1.1rem;
-            color: #5a6c7d;
+            color: #2c3e50;
             line-height: 1.6;
             margin-bottom: 20px;
             position: relative;
             z-index: 1;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
         }
 
         .card-date {
             font-size: 0.9rem;
-            color: #95a5a6;
+            color: #576574;
             font-weight: 500;
             position: relative;
             z-index: 1;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
         }
 
         .download-section {
@@ -508,6 +636,16 @@
             z-index: 1;
         }
 
+        .auto-theme-info {
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4eefc 100%);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #2d3748;
+            border-left: 4px solid #4299e1;
+        }
+
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
@@ -520,6 +658,16 @@
             
             .input-section {
                 padding: 24px;
+            }
+            
+            .theme-options {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .theme-option {
+                height: 50px;
+                font-size: 0.75rem;
             }
             
             .upload-options {
@@ -595,11 +743,31 @@
             <div class="input-group">
                 <label for="emotionName">💭 감정의 이름</label>
                 <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
+                <div class="auto-theme-info">
+                    💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
+                </div>
             </div>
 
             <div class="input-group">
                 <label for="situation">📝 언제 이런 감정을 느끼나요?</label>
                 <textarea id="situation" placeholder="예: 친구들과 함께 놀 때, 좋은 성적을 받았을 때..."></textarea>
+            </div>
+
+            <!-- 배경 테마 선택기 -->
+            <div class="input-group background-selector">
+                <label>🎨 배경 테마 선택하기</label>
+                <div class="theme-options">
+                    <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
+                    <div class="theme-option theme-love" data-theme="love">사랑</div>
+                    <div class="theme-option theme-calm" data-theme="calm">평온</div>
+                    <div class="theme-option theme-energy" data-theme="energy">활기</div>
+                    <div class="theme-option theme-nature" data-theme="nature">자연</div>
+                    <div class="theme-option theme-creative" data-theme="creative">창의</div>
+                    <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
+                    <div class="theme-option theme-cool" data-theme="cool">시원함</div>
+                    <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
+                    <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
+                </div>
             </div>
 
             <div class="input-group">
@@ -723,7 +891,67 @@
         let isDragging = false;
         let lastX = 0;
         let lastY = 0;
-        let currentFacingMode = 'environment'; // 기본값을 후면 카메라로 변경
+        let currentFacingMode = 'environment';
+        let currentTheme = null;
+        let isManualThemeSelection = false;
+
+        // 감정별 키워드 매핑
+        const emotionKeywords = {
+            'joy': ['기쁨', '기쁘', '행복', '즐거', '신나', '재미', '웃음', '좋아', '만족', '즐겁', '쾌활', '유쾌', '상쾌'],
+            'love': ['사랑', '설렘', '좋아해', '마음', '애정', '로맨', '연애', '달콤', '포근', '따스', '애틋'],
+            'calm': ['평온', '차분', '고요', '조용', '편안', '안정', '평화', '여유', '느긋', '담담', '침착', '정적'],
+            'energy': ['활기', '열정', '에너지', '신남', '흥미', '활발', '역동', '파워', '힘찬', '생동', '활력', '펄떡'],
+            'nature': ['자연', '초록', '푸른', '맑은', '청량', '싱그', '생기', '건강', '자유', '상큼', '청명'],
+            'creative': ['창의', '예술', '상상', '꿈', '환상', '독창', '발상', '아이디어', '영감', '신비', '마법'],
+            'warm': ['따뜻', '포근', '아늑', '온화', '부드', '달콤', '감미', '친근', '정겨', '훈훈'],
+            'cool': ['시원', '차가', '청량', '서늘', '냉정', '냉철', '맑은', '깔끔', '산뜻', '깨끗'],
+            'sunset': ['노을', '석양', '황금', '오렌지', '붉은', '저녁', '낭만', '아름다', '감성', '몽환'],
+            'ocean': ['바다', '파도', '바람', '시원', '푸른', '깊은', '광활', '자유', '모험', '여행']
+        };
+
+        // 감정 키워드 기반 테마 자동 선택
+        function detectEmotionTheme(emotionText) {
+            if (!emotionText) return null;
+            
+            const text = emotionText.toLowerCase();
+            
+            for (const [theme, keywords] of Object.entries(emotionKeywords)) {
+                if (keywords.some(keyword => text.includes(keyword))) {
+                    return theme;
+                }
+            }
+            
+            return null;
+        }
+
+        // 테마 적용 함수
+        function applyTheme(theme) {
+            const card = document.getElementById('emotionCard');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            
+            // 기존 테마 클래스 제거
+            card.className = 'card';
+            themeOptions.forEach(option => option.classList.remove('active'));
+            
+            if (theme) {
+                // 새 테마 적용
+                card.classList.add(`theme-${theme}`);
+                const activeOption = document.querySelector(`[data-theme="${theme}"]`);
+                if (activeOption) {
+                    activeOption.classList.add('active');
+                }
+                currentTheme = theme;
+            }
+        }
+
+        // 수동 테마 선택 이벤트
+        document.querySelectorAll('.theme-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const selectedTheme = this.dataset.theme;
+                isManualThemeSelection = true;
+                applyTheme(selectedTheme);
+            });
+        });
 
         // 입력 필드 이벤트 리스너
         document.getElementById('userName').addEventListener('input', function() {
@@ -734,6 +962,14 @@
         document.getElementById('emotionName').addEventListener('input', function() {
             const text = this.value || '감정의 이름';
             document.getElementById('cardEmotion').textContent = text;
+            
+            // 수동 선택하지 않은 경우에만 자동 테마 적용
+            if (!isManualThemeSelection) {
+                const detectedTheme = detectEmotionTheme(text);
+                if (detectedTheme) {
+                    applyTheme(detectedTheme);
+                }
+            }
         });
 
         document.getElementById('situation').addEventListener('input', function() {
@@ -1115,6 +1351,11 @@
                 // 이미지 초기화
                 document.getElementById('previewImage').style.display = 'none';
                 document.getElementById('cardImageContainer').innerHTML = '<span>그림을 업로드해주세요</span>';
+
+                // 테마 초기화
+                isManualThemeSelection = false;
+                currentTheme = null;
+                applyTheme(null);
 
                 // 카메라 종료 (실행 중인 경우)
                 stopCamera();
