@@ -3,731 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>순간감정카드 메이커</title>
+    <title>✨ 순간감정카드 메이커 v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: start;
-        }
-
-        .header {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.1rem;
-        }
-
-        .input-section {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .input-group {
-            margin-bottom: 28px;
-        }
-
-        .input-group label {
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .font-handwriting { font-family: 'Gaegu', cursive; }
+        .font-dodum { font-family: 'Gowun Dodum', sans-serif; }
+        .roulette-needle { transform-origin: bottom center; transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1); }
+        
+        [contenteditable=true]:empty:before {
+            content: attr(placeholder);
+            pointer-events: none;
             display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1rem;
+            color: #9ca3af;
         }
-
-        .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e1e8ed;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .input-group input:focus, .input-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-group textarea {
-            resize: vertical;
-            height: 100px;
-            font-family: inherit;
-        }
-
-        /* 배경 테마 선택기 스타일 */
-        .background-selector {
-            margin-bottom: 28px;
-        }
-
-        .theme-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .theme-option {
-            height: 60px;
-            border-radius: 12px;
+        
+        .template-card {
             cursor: pointer;
-            border: 3px solid transparent;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
-
-        .theme-option:hover {
+        
+        .template-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
-
-        .theme-option.active {
-            border-color: #667eea;
+        
+        .template-card.selected {
+            ring: 3px;
+            ring-color: #3b82f6;
             transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
-
-        /* 감정별 배경 테마 */
-        .theme-joy {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            color: #d35400;
-        }
-
-        .theme-love {
-            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
-        }
-
-        .theme-calm {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-        }
-
-        .theme-energy {
-            background: linear-gradient(135deg, #ff7675 0%, #e17055 100%);
-        }
-
-        .theme-nature {
-            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-        }
-
-        .theme-creative {
-            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
-        }
-
-        .theme-warm {
-            background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
-        }
-
-        .theme-cool {
-            background: linear-gradient(135deg, #81ecec 0%, #00b894 100%);
-        }
-
-        .theme-sunset {
-            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%);
-        }
-
-        .theme-ocean {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
-        }
-
-        .upload-options {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .upload-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            border: 2px solid #667eea;
+        
+        .canvas-container {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
             border-radius: 12px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            max-width: 150px;
-        }
-
-        .upload-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .upload-btn .icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .upload-btn .text {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 16px;
-            padding: 40px 20px;
-            text-align: center;
-            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-            cursor: pointer;
-            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-
-        .upload-area:hover {
-            border-color: #764ba2;
-            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-        }
-
-        .upload-area.dragover {
-            border-color: #667eea;
-            background: linear-gradient(45deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: #667eea;
-            margin-bottom: 16px;
-        }
-
-        .upload-text {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-
-        .upload-subtext {
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        #imageInput {
-            display: none;
-        }
-
-        .camera-section {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .camera-container {
-            position: relative;
-            display: inline-block;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-            margin-bottom: 20px;
-        }
-
-        #cameraVideo {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            display: block;
-        }
-
-        .camera-controls {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .camera-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
+        
+        .image-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-
-        .btn-capture {
-            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-            color: white;
-            box-shadow: 0 6px 16px rgba(0, 184, 148, 0.3);
+        
+        .image-upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
         }
-
-        .btn-switch {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        
+        .image-upload-area.dragover {
+            border-color: #10b981;
+            background-color: #ecfdf5;
         }
-
-        .btn-cancel {
-            background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
-            color: white;
-            box-shadow: 0 6px 16px rgba(99, 110, 114, 0.3);
+        
+        /* 감정 애니메이션 */
+        .emotion-pulse { animation: emotionPulse 0.6s ease-out; }
+        @keyframes emotionPulse {
+            0% { background-color: #fef3c7; transform: scale(1); }
+            50% { background-color: #fde68a; transform: scale(1.02); }
+            100% { background-color: #f9fafb; transform: scale(1); }
         }
-
-        .camera-btn:hover {
-            transform: translateY(-2px);
+        
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        #capturedCanvas {
-            display: none;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 12px;
-            margin-top: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .card-preview {
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 20px;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 20px;
-            padding: 32px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-
-        /* 감정별 카드 테마 */
-        .card.theme-joy {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-        }
-
-        .card.theme-love {
-            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
-        }
-
-        .card.theme-calm {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-        }
-
-        .card.theme-energy {
-            background: linear-gradient(135deg, #ff7675 0%, #e17055 100%);
-        }
-
-        .card.theme-nature {
-            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-        }
-
-        .card.theme-creative {
-            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
-        }
-
-        .card.theme-warm {
-            background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
-        }
-
-        .card.theme-cool {
-            background: linear-gradient(135deg, #81ecec 0%, #00b894 100%);
-        }
-
-        .card.theme-sunset {
-            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%);
-        }
-
-        .card.theme-ocean {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 2px,
-                rgba(255,255,255,0.1) 2px,
-                rgba(255,255,255,0.1) 4px
-            );
-            animation: shimmer 3s linear infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .card-image {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 16px;
-            margin: 0 auto 24px;
-            border: 4px solid white;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-            position: relative;
-            z-index: 1;
-        }
-
-        .card-emotion {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.5);
-        }
-
-        .card-name {
-            font-size: 1rem;
-            color: #34495e;
-            font-weight: 500;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
-        }
-
-        .card-situation {
-            font-size: 1.1rem;
-            color: #2c3e50;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
-        }
-
-        .card-date {
-            font-size: 0.9rem;
-            color: #576574;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
-        }
-
-        .download-section {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .download-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 16px 32px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .btn-reset {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-            color: white;
-            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-        }
-
-        .placeholder-image {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #e3e8ed 0%, #c8d4e0 100%);
-            border-radius: 16px;
-            margin: 0 auto 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #7c8ba1;
-            font-size: 1rem;
-            border: 4px solid white;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .auto-theme-info {
-            margin-top: 8px;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #e8f4f8 0%, #d4eefc 100%);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: #2d3748;
-            border-left: 4px solid #4299e1;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .input-section {
-                padding: 24px;
-            }
-            
-            .theme-options {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            
-            .theme-option {
-                height: 50px;
-                font-size: 0.75rem;
-            }
-            
-            .upload-options {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .upload-btn {
-                max-width: none;
-                flex-direction: row;
-                justify-content: center;
-                padding: 16px;
-            }
-            
-            .upload-btn .icon {
-                margin-bottom: 0;
-                margin-right: 8px;
-                font-size: 1.5rem;
-            }
-            
-            .camera-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .camera-btn {
-                width: 200px;
-                justify-content: center;
-                margin-bottom: 8px;
-            }
-            
-            .download-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
+        
+        /* 템플릿 배경들 - 감정 테마 */
+        .template-joy { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); }
+        .template-love { background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); }
+        .template-calm { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+        .template-energy { background: linear-gradient(135deg, #ff7675 0%, #e17055 100%); }
+        .template-nature { background: linear-gradient(135deg, #00b894 0%, #00a085 100%); }
+        .template-creative { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
+        .template-warm { background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%); }
+        .template-sunset { background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%); }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>✨ 순간감정카드 메이커</h1>
-            <p>지금 이 순간의 감정을 카드로 만들어보세요</p>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- 헤더 -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 font-handwriting">✨ 순간감정카드 메이커</h1>
+                    <p class="text-lg text-gray-600 mt-2">지금 이 순간의 감정을 특별한 카드로 만들어보세요</p>
+                </div>
+                <div class="text-right text-sm text-gray-500">
+                    <p>v2.0 - Enhanced Edition</p>
+                    <p id="current-date" class="font-medium"></p>
+                </div>
+            </div>
         </div>
+    </header>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="userName">👤 이름</label>
-                <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
-            </div>
-
-            <div class="input-group">
-                <label for="emotionName">💭 지금 이 순간의 감정</label>
-                <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
-                <div class="auto-theme-info">
-                    💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
-                <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며, 집에서 좋아하는 음악을 들으며..."></textarea>
-            </div>
-
-            <!-- 배경 테마 선택기 -->
-            <div class="input-group background-selector">
-                <label>🎨 배경 테마 선택하기</label>
-                <div class="theme-options">
-                    <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
-                    <div class="theme-option theme-love" data-theme="love">사랑</div>
-                    <div class="theme-option theme-calm" data-theme="calm">평온</div>
-                    <div class="theme-option theme-energy" data-theme="energy">활기</div>
-                    <div class="theme-option theme-nature" data-theme="nature">자연</div>
-                    <div class="theme-option theme-creative" data-theme="creative">창의</div>
-                    <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
-                    <div class="theme-option theme-cool" data-theme="cool">시원함</div>
-                    <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
-                    <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>📸 지금 이 순간의 사진 추가하기</label>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            
+            <!-- 왼쪽: 감정 입력 & 설정 -->
+            <div class="xl:col-span-2 space-y-6">
                 
-                <div class="upload-options">
-                    <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
-                        <div class="icon">📁</div>
-                        <div class="text">파일 선택</div>
-                    </div>
-                    <div class="upload-btn" onclick="startCamera()">
-                        <div class="icon">📷</div>
-                        <div class="text">사진 촬영</div>
-                    </div>
-                </div>
-
-                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-                    <div class="upload-icon">📸</div>
-                    <div class="upload-text">지금 이 순간의 사진을 업로드하거나 촬영하세요</div>
-                    <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
-                    <input type="file" id="imageInput" accept="image/*">
-                </div>
-
-                <div class="camera-section" id="cameraSection">
-                    <div class="camera-container">
-                        <video id="cameraVideo" autoplay muted playsinline></video>
-                    </div>
-                    <div class="camera-controls">
-                        <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
-                            🔄 카메라 전환
-                        </button>
-                        <button class="camera-btn btn-capture" onclick="capturePhoto()">
-                            📸 사진 찍기
-                        </button>
-                        <button class="camera-btn btn-cancel" onclick="stopCamera()">
-                            ❌ 취소
-                        </button>
+                <!-- 감정 영감 뽑기 섹션 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center">🎭 감정 영감 뽑기</h2>
+                    <div class="text-center space-y-4">
+                        <div class="relative w-48 h-48 mx-auto bg-gradient-to-br from-purple-200 via-pink-200 to-blue-200 rounded-full flex items-center justify-center shadow-inner" role="img" aria-label="감정 룰렛">
+                            <div id="emotion-needle" class="roulette-needle absolute w-2 h-24 bg-red-500 rounded-t-full bottom-1/2 shadow-lg border-2 border-white"></div>
+                            <div class="w-8 h-8 bg-white rounded-full z-10 border-4 border-red-500"></div>
+                        </div>
+                        <button id="btn-emotion-spin" class="bg-purple-500 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-600 transition-colors text-xl shadow-md font-handwriting">🎯 감정 영감 받기</button>
+                        <div class="bg-gray-50 p-4 rounded-xl min-h-[6rem] flex items-center justify-center text-center">
+                            <p id="current-emotion" class="text-2xl text-gray-800 font-medium font-dodum">버튼을 눌러 시작하세요!</p>
+                        </div>
+                        <button id="btn-use-emotion" class="hidden bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition-colors text-lg shadow font-handwriting">💫 이 감정 사용하기</button>
                     </div>
                 </div>
 
-                <canvas id="capturedCanvas"></canvas>
-                <img id="previewImage" class="preview-image" style="display: none;">
+                <!-- 기본 정보 입력 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-4">📝 감정카드 정보</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="input-name" class="block text-gray-700 font-medium mb-2">👤 이름:</label>
+                            <input type="text" id="input-name" placeholder="이름을 입력해주세요" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" maxlength="15">
+                        </div>
+                        <div>
+                            <label for="input-emotion" class="block text-gray-700 font-medium mb-2">💭 지금 이 순간의 감정:</label>
+                            <input type="text" id="input-emotion" placeholder="예: 기쁨, 설렘, 아쉬움..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" maxlength="20">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="input-situation" class="block text-gray-700 font-medium mb-2">📖 상황 설명:</label>
+                        <textarea id="input-situation" placeholder="지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 h-20 resize-none"></textarea>
+                    </div>
+
+                    <!-- 자동 테마 안내 -->
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-blue-800 text-sm">💡 감정을 입력하면 어울리는 배경 테마가 자동으로 선택됩니다!</p>
+                    </div>
+                </div>
+
+                <!-- 테마 & 배경 설정 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-4">🎨 카드 디자인</h2>
+                    
+                    <!-- 테마 선택 -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-3">감정 테마 선택:</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="template-selection">
+                            <div class="template-card template-joy w-full h-20 rounded-lg border-2 border-gray-200 selected" data-template="joy">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">😊 기쁨</div>
+                            </div>
+                            <div class="template-card template-love w-full h-20 rounded-lg border-2 border-gray-200" data-template="love">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">💕 사랑</div>
+                            </div>
+                            <div class="template-card template-calm w-full h-20 rounded-lg border-2 border-gray-200" data-template="calm">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">😌 평온</div>
+                            </div>
+                            <div class="template-card template-energy w-full h-20 rounded-lg border-2 border-gray-200" data-template="energy">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">⚡ 활기</div>
+                            </div>
+                            <div class="template-card template-nature w-full h-20 rounded-lg border-2 border-gray-200" data-template="nature">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">🌱 자연</div>
+                            </div>
+                            <div class="template-card template-creative w-full h-20 rounded-lg border-2 border-gray-200" data-template="creative">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">🎨 창의</div>
+                            </div>
+                            <div class="template-card template-warm w-full h-20 rounded-lg border-2 border-gray-200" data-template="warm">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">🔥 따뜻함</div>
+                            </div>
+                            <div class="template-card template-sunset w-full h-20 rounded-lg border-2 border-gray-200" data-template="sunset">
+                                <div class="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">🌅 노을</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 이미지 업로드 -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-3">📸 순간의 사진 (선택사항):</label>
+                        <div class="flex gap-4 mb-4">
+                            <button id="btn-upload" class="flex-1 bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition-colors font-medium">📁 파일 선택</button>
+                            <button id="btn-camera" class="flex-1 bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors font-medium">📷 사진 촬영</button>
+                        </div>
+                        
+                        <div id="image-upload-area" class="image-upload-area p-8 text-center">
+                            <input type="file" id="image-input" class="hidden" accept="image/*">
+                            <div id="upload-placeholder">
+                                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <p class="text-gray-600">이미지를 드래그하거나 클릭해서 업로드하세요</p>
+                            </div>
+                            <div id="image-preview" class="hidden">
+                                <img id="preview-img" class="max-w-full max-h-32 mx-auto rounded-lg">
+                                <button id="remove-image" class="mt-2 text-red-500 hover:text-red-700 text-sm">✕ 이미지 제거</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 카메라 섹션 -->
+                    <div id="camera-section" class="hidden mt-4">
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <video id="camera-video" class="w-full max-w-md mx-auto rounded-lg" autoplay muted playsinline></video>
+                            <div class="flex justify-center gap-2 mt-4">
+                                <button id="btn-switch-camera" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">🔄 전환</button>
+                                <button id="btn-capture" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">📸 촬영</button>
+                                <button id="btn-cancel-camera" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">❌ 취소</button>
+                            </div>
+                        </div>
+                        <canvas id="capture-canvas" class="hidden"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="card-preview">
-            <div class="card" id="emotionCard">
-                <div class="placeholder-image" id="cardImageContainer">
-                    <span>사진을 업로드해주세요</span>
+            <!-- 오른쪽: 실시간 미리보기 -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg sticky top-8">
+                <h2 class="text-xl font-bold text-gray-700 mb-4 text-center">🖼️ 실시간 미리보기</h2>
+                
+                <div class="canvas-container mb-4">
+                    <canvas id="preview-canvas" width="400" height="600" class="w-full h-auto rounded-lg"></canvas>
                 </div>
-                <div class="card-emotion" id="cardEmotion">지금 이 순간의 감정</div>
-                <div class="card-name" id="cardName">이름을 입력해주세요</div>
-                <div class="card-situation" id="cardSituation">지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요</div>
-                <div class="card-date" id="cardDate"></div>
-            </div>
-        </div>
 
-        <div class="download-section">
-            <div class="download-buttons">
-                <button class="btn btn-reset" onclick="resetForm()">
-                    🔄 새로 작성하기
-                </button>
-                <button class="btn btn-primary" onclick="downloadCard('png')">
-                    📱 이미지로 저장
-                </button>
-                <button class="btn btn-secondary" onclick="downloadCard('pdf')">
-                    📄 PDF로 저장
-                </button>
+                <div class="space-y-3">
+                    <button id="btn-download-png" class="w-full bg-purple-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-600 transition-colors text-lg shadow-md font-handwriting" disabled>📱 이미지로 저장</button>
+                    <button id="btn-download-pdf" class="w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition-colors text-lg shadow-md font-handwriting" disabled>📄 PDF로 저장</button>
+                    <button id="btn-reset" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors font-handwriting">🔄 새로 만들기</button>
+                </div>
+
+                <div class="mt-4 p-4 bg-purple-50 rounded-lg">
+                    <h3 class="font-bold text-purple-800 mb-2">💡 제작 가이드</h3>
+                    <ul class="text-sm text-purple-700 space-y-1">
+                        <li>• 룰렛으로 감정 영감을 받아보세요</li>
+                        <li>• 지금 이 순간의 감정을 써보세요</li>
+                        <li>• 상황을 자세히 설명해보세요</li>
+                        <li>• 테마를 선택하고 사진을 추가하세요</li>
+                        <li>• 완성된 카드를 저장하고 공유하세요</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
     <script>
-        // 현재 날짜 설정
-        document.getElementById('cardDate').textContent = new Date().toLocaleDateString('ko-KR');
+        // 감정 키워드 데이터
+        const emotionInspiration = [
+            "기쁨", "행복", "즐거움", "신남", "만족", "뿌듯함", 
+            "사랑", "설렘", "따뜻함", "포근함", "애정", "그리움",
+            "평온", "차분함", "여유", "안정", "편안함", "고요함",
+            "활기", "열정", "에너지", "역동", "힘참", "생동감",
+            "자유", "상쾌함", "청량감", "맑음", "싱그러움", "생기",
+            "창의", "영감", "상상", "꿈", "환상", "신비로움",
+            "아쉬움", "그리움", "쓸쓸함", "외로움", "슬픔", "우울",
+            "분노", "짜증", "답답함", "스트레스", "화남", "불만",
+            "두려움", "걱정", "불안", "긴장", "떨림", "무서움",
+            "놀라움", "당황", "혼란", "의아함", "신기함", "경이로움"
+        ];
 
-        // 전역 변수
-        let cameraStream = null;
-        let currentFacingMode = 'environment';
-        let currentTheme = null;
-        let isManualThemeSelection = false;
-
-        // 감정별 키워드 매핑
         const emotionKeywords = {
             'joy': ['기쁨', '기쁘', '행복', '즐거', '신나', '재미', '웃음', '좋아', '만족', '즐겁', '쾌활', '유쾌', '상쾌'],
             'love': ['사랑', '설렘', '좋아해', '마음', '애정', '로맨', '연애', '달콤', '포근', '따스', '애틋'],
@@ -736,129 +278,319 @@
             'nature': ['자연', '초록', '푸른', '맑은', '청량', '싱그', '생기', '건강', '자유', '상큼', '청명'],
             'creative': ['창의', '예술', '상상', '꿈', '환상', '독창', '발상', '아이디어', '영감', '신비', '마법'],
             'warm': ['따뜻', '포근', '아늑', '온화', '부드', '달콤', '감미', '친근', '정겨', '훈훈'],
-            'cool': ['시원', '차가', '청량', '서늘', '냉정', '냉철', '맑은', '깔끔', '산뜻', '깨끗'],
-            'sunset': ['노을', '석양', '황금', '오렌지', '붉은', '저녁', '낭만', '아름다', '감성', '몽환'],
-            'ocean': ['바다', '파도', '바람', '시원', '푸른', '깊은', '광활', '자유', '모험', '여행']
+            'sunset': ['노을', '석양', '황금', '오렌지', '붉은', '저녁', '낭만', '아름다', '감성', '몽환']
         };
 
-        // 감정 키워드 기반 테마 자동 선택
+        const templates = {
+            joy: { background: 'linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%)', textColor: '#d35400' },
+            love: { background: 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)', textColor: '#831843' },
+            calm: { background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)', textColor: '#1e3a8a' },
+            energy: { background: 'linear-gradient(135deg, #ff7675 0%, #e17055 100%)', textColor: '#c92a2a' },
+            nature: { background: 'linear-gradient(135deg, #00b894 0%, #00a085 100%)', textColor: '#14532d' },
+            creative: { background: 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)', textColor: '#581c87' },
+            warm: { background: 'linear-gradient(135deg, #fab1a0 0%, #e17055 100%)', textColor: '#c92a2a' },
+            sunset: { background: 'linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #e17055 100%)', textColor: '#c92a2a' }
+        };
+
+        // DOM 요소들
+        const needle = document.getElementById('emotion-needle');
+        const btnEmotionSpin = document.getElementById('btn-emotion-spin');
+        const currentEmotion = document.getElementById('current-emotion');
+        const btnUseEmotion = document.getElementById('btn-use-emotion');
+        const inputName = document.getElementById('input-name');
+        const inputEmotion = document.getElementById('input-emotion');
+        const inputSituation = document.getElementById('input-situation');
+        const templateSelection = document.getElementById('template-selection');
+        const btnUpload = document.getElementById('btn-upload');
+        const btnCamera = document.getElementById('btn-camera');
+        const imageInput = document.getElementById('image-input');
+        const imageUploadArea = document.getElementById('image-upload-area');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const removeImageBtn = document.getElementById('remove-image');
+        const cameraSection = document.getElementById('camera-section');
+        const cameraVideo = document.getElementById('camera-video');
+        const btnSwitchCamera = document.getElementById('btn-switch-camera');
+        const btnCapture = document.getElementById('btn-capture');
+        const btnCancelCamera = document.getElementById('btn-cancel-camera');
+        const captureCanvas = document.getElementById('capture-canvas');
+        const canvas = document.getElementById('preview-canvas');
+        const ctx = canvas.getContext('2d');
+        const btnDownloadPng = document.getElementById('btn-download-png');
+        const btnDownloadPdf = document.getElementById('btn-download-pdf');
+        const btnReset = document.getElementById('btn-reset');
+        const currentDateElement = document.getElementById('current-date');
+
+        // 상태 관리
+        let isSpinning = false;
+        let drawnEmotion = '';
+        let selectedTemplate = 'joy';
+        let backgroundImage = null;
+        let cameraStream = null;
+        let currentFacingMode = 'environment';
+        let isManualThemeSelection = false;
+
+        // 초기화
+        function init() {
+            const today = new Date();
+            currentDateElement.textContent = today.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            
+            updateTemplateSelection(selectedTemplate);
+            renderCanvas();
+        }
+
+        // 감정 영감 뽑기
+        function handleEmotionSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            drawnEmotion = '';
+            
+            needle.style.transform = `rotate(${Math.random() * 360 + 1080}deg)`;
+            currentEmotion.textContent = "감정을 찾는 중...";
+            btnUseEmotion.classList.add('hidden');
+            btnEmotionSpin.disabled = true;
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * emotionInspiration.length);
+                drawnEmotion = emotionInspiration[randomIndex];
+                currentEmotion.textContent = drawnEmotion;
+                isSpinning = false;
+                btnEmotionSpin.disabled = false;
+                btnUseEmotion.classList.remove('hidden');
+            }, 2000);
+        }
+
+        // 감정 사용하기
+        function useEmotion() {
+            if (drawnEmotion) {
+                inputEmotion.value = drawnEmotion;
+                
+                // 자동 테마 적용
+                if (!isManualThemeSelection) {
+                    const detectedTheme = detectEmotionTheme(drawnEmotion);
+                    if (detectedTheme) {
+                        selectedTemplate = detectedTheme;
+                        updateTemplateSelection(selectedTemplate);
+                    }
+                }
+                
+                renderCanvas();
+                
+                // 피드백
+                btnUseEmotion.textContent = '✅ 적용됨!';
+                btnUseEmotion.disabled = true;
+                setTimeout(() => {
+                    btnUseEmotion.textContent = '💫 이 감정 사용하기';
+                    btnUseEmotion.disabled = false;
+                }, 1000);
+            }
+        }
+
+        // 감정 테마 자동 감지
         function detectEmotionTheme(emotionText) {
             if (!emotionText) return null;
             
             const text = emotionText.toLowerCase();
-            
             for (const [theme, keywords] of Object.entries(emotionKeywords)) {
                 if (keywords.some(keyword => text.includes(keyword))) {
                     return theme;
                 }
             }
-            
             return null;
         }
 
-        // 테마 적용 함수
-        function applyTheme(theme) {
-            const card = document.getElementById('emotionCard');
-            const themeOptions = document.querySelectorAll('.theme-option');
+        // 템플릿 선택 업데이트
+        function updateTemplateSelection(template) {
+            const templateCards = document.querySelectorAll('.template-card');
+            templateCards.forEach(card => {
+                const isSelected = card.dataset.template === template;
+                card.classList.toggle('selected', isSelected);
+            });
+        }
+
+        // 파일명 생성
+        function generateFileName(format) {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            const userName = inputName.value.trim() || '익명';
+            const emotionName = inputEmotion.value.trim() || '감정';
             
-            // 기존 테마 클래스 제거
-            card.className = 'card';
-            themeOptions.forEach(option => option.classList.remove('active'));
+            function sanitizeFileName(str) {
+                return str.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_');
+            }
             
-            if (theme) {
-                // 새 테마 적용
-                card.classList.add(`theme-${theme}`);
-                const activeOption = document.querySelector(`[data-theme="${theme}"]`);
-                if (activeOption) {
-                    activeOption.classList.add('active');
+            const cleanUserName = sanitizeFileName(userName);
+            const cleanEmotionName = sanitizeFileName(emotionName);
+            const baseName = `${dateString}_${cleanUserName}_${cleanEmotionName}_순간감정카드`;
+            const extension = format === 'pdf' ? 'pdf' : 'png';
+            
+            return `${baseName}.${extension}`;
+        }
+
+        // 캔버스 렌더링
+        function renderCanvas() {
+            try {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 배경 그리기
+                if (backgroundImage) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                        const scaledWidth = img.width * scale;
+                        const scaledHeight = img.height * scale;
+                        const x = (canvas.width - scaledWidth) / 2;
+                        const y = (canvas.height - scaledHeight) / 2;
+                        
+                        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        renderTextContent();
+                    };
+                    img.src = backgroundImage;
+                } else {
+                    // 그라데이션 배경
+                    const template = templates[selectedTemplate];
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    
+                    if (selectedTemplate === 'joy') {
+                        gradient.addColorStop(0, '#ffeaa7');
+                        gradient.addColorStop(1, '#fdcb6e');
+                    } else if (selectedTemplate === 'love') {
+                        gradient.addColorStop(0, '#fd79a8');
+                        gradient.addColorStop(1, '#e84393');
+                    } else if (selectedTemplate === 'calm') {
+                        gradient.addColorStop(0, '#74b9ff');
+                        gradient.addColorStop(1, '#0984e3');
+                    } else if (selectedTemplate === 'energy') {
+                        gradient.addColorStop(0, '#ff7675');
+                        gradient.addColorStop(1, '#e17055');
+                    } else if (selectedTemplate === 'nature') {
+                        gradient.addColorStop(0, '#00b894');
+                        gradient.addColorStop(1, '#00a085');
+                    } else if (selectedTemplate === 'creative') {
+                        gradient.addColorStop(0, '#a29bfe');
+                        gradient.addColorStop(1, '#6c5ce7');
+                    } else if (selectedTemplate === 'warm') {
+                        gradient.addColorStop(0, '#fab1a0');
+                        gradient.addColorStop(1, '#e17055');
+                    } else if (selectedTemplate === 'sunset') {
+                        gradient.addColorStop(0, '#fd79a8');
+                        gradient.addColorStop(0.5, '#fdcb6e');
+                        gradient.addColorStop(1, '#e17055');
+                    }
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    renderTextContent();
                 }
-                currentTheme = theme;
+            } catch (error) {
+                console.error('캔버스 렌더링 오류:', error);
             }
         }
 
-        // 수동 테마 선택 이벤트
-        document.querySelectorAll('.theme-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const selectedTheme = this.dataset.theme;
-                isManualThemeSelection = true;
-                applyTheme(selectedTheme);
-            });
-        });
+        function renderTextContent() {
+            try {
+                const template = templates[selectedTemplate];
+                ctx.fillStyle = template.textColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const nameText = inputName.value || "이름을 입력해주세요";
+                const emotionText = inputEmotion.value || "지금 이 순간의 감정";
+                const situationText = inputSituation.value || "지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요";
+                const dateText = new Date().toLocaleDateString('ko-KR');
+                
+                // 제목 영역 (감정)
+                ctx.font = 'bold 36px "Gowun Dodum", sans-serif';
+                ctx.fillText(emotionText, canvas.width / 2, 80);
+                
+                // 이름
+                ctx.font = '24px "Gowun Dodum", sans-serif';
+                ctx.fillText(nameText, canvas.width / 2, 130);
+                
+                // 상황 설명 (중앙)
+                ctx.font = '20px "Gowun Dodum", sans-serif';
+                const maxWidth = canvas.width - 80;
+                const lineHeight = 30;
+                const startY = canvas.height / 2;
+                
+                wrapText(ctx, situationText, canvas.width / 2, startY, maxWidth, lineHeight);
+                
+                // 날짜 (하단)
+                ctx.font = '18px "Gowun Dodum", sans-serif';
+                ctx.fillText(dateText, canvas.width / 2, canvas.height - 50);
+                
+                // 다운로드 버튼 활성화
+                const hasContent = inputName.value || inputEmotion.value || inputSituation.value;
+                btnDownloadPng.disabled = !hasContent;
+                btnDownloadPdf.disabled = !hasContent;
+                
+            } catch (error) {
+                console.error('텍스트 렌더링 오류:', error);
+            }
+        }
 
-        // 입력 필드 이벤트 리스너
-        document.getElementById('userName').addEventListener('input', function() {
-            const text = this.value || '이름을 입력해주세요';
-            document.getElementById('cardName').textContent = text;
-        });
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
 
-        document.getElementById('emotionName').addEventListener('input', function() {
-            const text = this.value || '지금 이 순간의 감정';
-            document.getElementById('cardEmotion').textContent = text;
-            
-            // 수동 선택하지 않은 경우에만 자동 테마 적용
-            if (!isManualThemeSelection) {
-                const detectedTheme = detectEmotionTheme(text);
-                if (detectedTheme) {
-                    applyTheme(detectedTheme);
+            for (let word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+                
+                if (metrics.width > maxWidth && currentLine !== '') {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
                 }
             }
-        });
+            if (currentLine) {
+                lines.push(currentLine);
+            }
 
-        document.getElementById('situation').addEventListener('input', function() {
-            const text = this.value || '지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요';
-            document.getElementById('cardSituation').textContent = text;
-        });
+            const totalHeight = lines.length * lineHeight;
+            const startY = y - (totalHeight / 2) + (lineHeight / 2);
+            
+            lines.forEach((line, index) => {
+                ctx.fillText(line, x, startY + (index * lineHeight));
+            });
+        }
 
         // 이미지 업로드 처리
-        const imageInput = document.getElementById('imageInput');
-        const uploadArea = document.querySelector('.upload-area');
-        const previewImage = document.getElementById('previewImage');
-        const cardImageContainer = document.getElementById('cardImageContainer');
-
-        imageInput.addEventListener('change', handleImageUpload);
-
-        // 드래그 앤 드롭 처리
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                imageInput.files = files;
-                handleImageUpload();
-            }
-        });
-
-        function handleImageUpload() {
-            const file = imageInput.files[0];
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    applyImageToCard(e.target.result);
+                    backgroundImage = e.target.result;
+                    previewImg.src = backgroundImage;
+                    uploadPlaceholder.classList.add('hidden');
+                    imagePreview.classList.remove('hidden');
+                    renderCanvas();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // 간단한 이미지 처리 - 자동 리사이즈
-        function applyImageToCard(imageSrc) {
-            // 미리보기 이미지 표시
-            previewImage.src = imageSrc;
-            previewImage.style.display = 'block';
-            
-            // 카드에 이미지 적용 (자동으로 200x200에 맞춤)
-            cardImageContainer.innerHTML = `<img src="${imageSrc}" class="card-image" alt="업로드된 이미지">`;
+        // 이미지 제거
+        function removeImage() {
+            backgroundImage = null;
+            imagePreview.classList.add('hidden');
+            uploadPlaceholder.classList.remove('hidden');
+            imageInput.value = '';
+            renderCanvas();
         }
 
-        // 카메라 기능 - 간단 버전
+        // 카메라 시작
         async function startCamera() {
             try {
                 const constraints = {
@@ -870,16 +602,8 @@
                 };
 
                 cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = cameraStream;
-                
-                document.getElementById('cameraSection').style.display = 'block';
-                updateSwitchButton();
-                
-                // 스크롤을 카메라 섹션으로 이동
-                document.getElementById('cameraSection').scrollIntoView({ 
-                    behavior: 'smooth' 
-                });
+                cameraVideo.srcObject = cameraStream;
+                cameraSection.classList.remove('hidden');
 
             } catch (error) {
                 console.error('카메라 접근 오류:', error);
@@ -887,175 +611,60 @@
             }
         }
 
+        // 카메라 전환
         async function switchCamera() {
-            // 현재 스트림 종료
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
             }
 
-            // 카메라 모드 전환
             currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-
-            try {
-                const constraints = {
-                    video: {
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        facingMode: currentFacingMode
-                    }
-                };
-
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = cameraStream;
-                
-                updateSwitchButton();
-
-            } catch (error) {
-                console.error('카메라 전환 오류:', error);
-                alert('카메라를 전환할 수 없습니다. 다른 카메라가 사용 가능한지 확인해주세요.');
-                
-                // 원래 모드로 되돌리기
-                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-                startCamera();
-            }
+            await startCamera();
         }
 
-        function updateSwitchButton() {
-            const switchBtn = document.getElementById('switchBtn');
-            if (currentFacingMode === 'user') {
-                switchBtn.innerHTML = '📷 후면 카메라';
-            } else {
-                switchBtn.innerHTML = '🤳 전면 카메라';
-            }
-        }
-
-        // 간단한 사진 촬영 - 바로 적용
+        // 사진 촬영
         function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('capturedCanvas');
-            const context = canvas.getContext('2d');
-
-            // 캔버스 크기를 비디오 크기에 맞춤
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            // 비디오 프레임을 캔버스에 그리기
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // 캔버스에서 이미지 데이터 가져오기
-            const imageData = canvas.toDataURL('image/png');
-
-            // 카메라 종료
-            stopCamera();
-
-            // 바로 카드에 적용
-            applyImageToCard(imageData);
+            const captureCtx = captureCanvas.getContext('2d');
+            captureCanvas.width = cameraVideo.videoWidth;
+            captureCanvas.height = cameraVideo.videoHeight;
             
-            // 성공 메시지
+            captureCtx.drawImage(cameraVideo, 0, 0, captureCanvas.width, captureCanvas.height);
+            
+            backgroundImage = captureCanvas.toDataURL('image/png');
+            previewImg.src = backgroundImage;
+            uploadPlaceholder.classList.add('hidden');
+            imagePreview.classList.remove('hidden');
+            
+            stopCamera();
+            renderCanvas();
             alert('📸 사진이 성공적으로 적용되었습니다!');
         }
 
+        // 카메라 중지
         function stopCamera() {
             if (cameraStream) {
-                // 모든 트랙 종료
-                cameraStream.getTracks().forEach(track => {
-                    track.stop();
-                });
+                cameraStream.getTracks().forEach(track => track.stop());
                 cameraStream = null;
             }
-
-            // 카메라 섹션 숨기기
-            document.getElementById('cameraSection').style.display = 'none';
+            cameraSection.classList.add('hidden');
         }
 
-        // 새로 작성하기 기능
-        function resetForm() {
-            // 확인 대화상자
-            if (confirm('모든 내용을 지우고 새로 작성하시겠습니까?')) {
-                // 입력 필드 초기화
-                document.getElementById('userName').value = '';
-                document.getElementById('emotionName').value = '';
-                document.getElementById('situation').value = '';
-                document.getElementById('imageInput').value = '';
-
-                // 카드 내용 초기화
-                document.getElementById('cardName').textContent = '이름을 입력해주세요';
-                document.getElementById('cardEmotion').textContent = '지금 이 순간의 감정';
-                document.getElementById('cardSituation').textContent = '지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요';
-
-                // 이미지 초기화
-                document.getElementById('previewImage').style.display = 'none';
-                document.getElementById('cardImageContainer').innerHTML = '<span>사진을 업로드해주세요</span>';
-
-                // 테마 초기화
-                isManualThemeSelection = false;
-                currentTheme = null;
-                applyTheme(null);
-
-                // 카메라 종료 (실행 중인 경우)
-                stopCamera();
-
-                // 성공 메시지
-                alert('✨ 새로운 순간감정카드를 작성할 준비가 완료되었습니다!');
-
-                // 맨 위로 스크롤
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        // 파일명 생성 함수 개선
-        function generateFileName(format) {
-            // 현재 날짜를 YYYY-MM-DD 형식으로 포맷
-            const today = new Date();
-            const dateString = today.toISOString().split('T')[0]; // 2025-07-11 형식
-            
-            // 사용자 입력값 가져오기
-            const userName = document.getElementById('userName').value.trim();
-            const emotionName = document.getElementById('emotionName').value.trim();
-            
-            // 기본값 설정
-            const safeUserName = userName || '익명';
-            const safeEmotionName = emotionName || '감정';
-            
-            // 파일명에 사용할 수 없는 문자 제거 (Windows/Mac/Linux 호환)
-            function sanitizeFileName(str) {
-                return str.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_');
-            }
-            
-            // 각 구성요소 정리
-            const cleanUserName = sanitizeFileName(safeUserName);
-            const cleanEmotionName = sanitizeFileName(safeEmotionName);
-            
-            // 파일명 구성: 날짜_이름_감정_타입.확장자
-            const baseName = `${dateString}_${cleanUserName}_${cleanEmotionName}_순간감정카드`;
-            const extension = format === 'pdf' ? 'pdf' : 'png';
-            
-            return `${baseName}.${extension}`;
-        }
-
-        // 다운로드 기능
+        // 다운로드 함수들
         async function downloadCard(format) {
-            const card = document.getElementById('emotionCard');
-            
             try {
-                const canvas = await html2canvas(card, {
-                    scale: 2,
-                    backgroundColor: null,
-                    useCORS: true,
-                    allowTaint: true
-                });
-
-                // 개선된 파일명 생성
                 const fileName = generateFileName(format);
-
+                
                 if (format === 'png') {
                     const link = document.createElement('a');
-                    link.download = fileName;
-                    link.href = canvas.toDataURL();
-                    link.click();
+                    const exportCanvas = await html2canvas(canvas, {
+                        scale: 2,
+                        backgroundColor: null,
+                        useCORS: true,
+                        allowTaint: true
+                    });
                     
-                    // 성공 메시지에 파일명 포함
+                    link.download = fileName;
+                    link.href = exportCanvas.toDataURL();
+                    link.click();
                     alert(`📱 이미지가 "${fileName}"으로 저장되었습니다!`);
                     
                 } else if (format === 'pdf') {
@@ -1068,22 +677,115 @@
                     
                     pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
                     pdf.save(fileName);
-                    
-                    // 성공 메시지에 파일명 포함
                     alert(`📄 PDF가 "${fileName}"으로 저장되었습니다!`);
                 }
                 
             } catch (error) {
-                console.error('Download error:', error);
+                console.error('다운로드 오류:', error);
                 alert('다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');
             }
         }
 
-        // 페이지 종료 시 리소스 정리
-        window.addEventListener('beforeunload', () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
+        // 리셋 함수
+        function resetAll() {
+            if (confirm('모든 내용을 지우고 새로 작성하시겠습니까?')) {
+                inputName.value = '';
+                inputEmotion.value = '';
+                inputSituation.value = '';
+                currentEmotion.textContent = "버튼을 눌러 시작하세요!";
+                btnUseEmotion.classList.add('hidden');
+                drawnEmotion = '';
+                backgroundImage = null;
+                imagePreview.classList.add('hidden');
+                uploadPlaceholder.classList.remove('hidden');
+                imageInput.value = '';
+                isManualThemeSelection = false;
+                selectedTemplate = 'joy';
+                updateTemplateSelection(selectedTemplate);
+                stopCamera();
+                renderCanvas();
+                alert('✨ 새로운 순간감정카드를 작성할 준비가 완료되었습니다!');
             }
+        }
+
+        // 이벤트 리스너들
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            
+            // 기본 이벤트들
+            btnEmotionSpin.addEventListener('click', handleEmotionSpin);
+            btnUseEmotion.addEventListener('click', useEmotion);
+            
+            // 입력 필드들
+            inputName.addEventListener('input', renderCanvas);
+            inputEmotion.addEventListener('input', function() {
+                renderCanvas();
+                
+                // 자동 테마 적용 (수동 선택하지 않은 경우만)
+                if (!isManualThemeSelection) {
+                    const detectedTheme = detectEmotionTheme(this.value);
+                    if (detectedTheme) {
+                        selectedTemplate = detectedTheme;
+                        updateTemplateSelection(selectedTemplate);
+                        renderCanvas();
+                    }
+                }
+            });
+            inputSituation.addEventListener('input', renderCanvas);
+            
+            // 템플릿 선택
+            templateSelection.addEventListener('click', (e) => {
+                const templateCard = e.target.closest('.template-card');
+                if (templateCard) {
+                    selectedTemplate = templateCard.dataset.template;
+                    isManualThemeSelection = true;
+                    updateTemplateSelection(selectedTemplate);
+                    renderCanvas();
+                }
+            });
+            
+            // 이미지 관련
+            btnUpload.addEventListener('click', () => imageInput.click());
+            imageInput.addEventListener('change', handleImageUpload);
+            removeImageBtn.addEventListener('click', removeImage);
+            
+            // 드래그 앤 드롭
+            imageUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                imageUploadArea.classList.add('dragover');
+            });
+            
+            imageUploadArea.addEventListener('dragleave', () => {
+                imageUploadArea.classList.remove('dragover');
+            });
+            
+            imageUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    imageInput.files = files;
+                    handleImageUpload({ target: { files } });
+                }
+            });
+            
+            // 카메라 관련
+            btnCamera.addEventListener('click', startCamera);
+            btnSwitchCamera.addEventListener('click', switchCamera);
+            btnCapture.addEventListener('click', capturePhoto);
+            btnCancelCamera.addEventListener('click', stopCamera);
+            
+            // 다운로드 & 리셋
+            btnDownloadPng.addEventListener('click', () => downloadCard('png'));
+            btnDownloadPdf.addEventListener('click', () => downloadCard('pdf'));
+            btnReset.addEventListener('click', resetAll);
+            
+            // 페이지 종료 시 카메라 정리
+            window.addEventListener('beforeunload', () => {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+            });
         });
     </script>
 </body>
