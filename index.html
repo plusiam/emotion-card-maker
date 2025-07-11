@@ -46,13 +46,7 @@
             font-size: 1.1rem;
         }
 
-        /* 왼쪽 열: 입력 섹션 + 다운로드 섹션 */
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
+        /* 데스크탑: 왼쪽 열에 입력 섹션 */
         .input-section {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -60,6 +54,7 @@
             padding: 32px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
         }
 
         .input-group {
@@ -179,41 +174,65 @@
             background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #00b894 100%);
         }
 
-        .upload-options {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 20px;
+        /* 이미지 옵션 메뉴 스타일 */
+        .image-options-menu {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            border: 1px solid #e1e8ed;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: fadeInUp 0.3s ease;
         }
 
-        .upload-btn {
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .option-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
             padding: 20px;
-            border: 2px solid #667eea;
-            border-radius: 12px;
-            background: white;
             cursor: pointer;
             transition: all 0.3s ease;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .option-item:last-child {
+            border-bottom: none;
+        }
+
+        .option-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+
+        .option-icon {
+            font-size: 2.5rem;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .option-text {
             flex: 1;
-            max-width: 150px;
         }
 
-        .upload-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .upload-btn .icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .upload-btn .text {
+        .option-title {
             font-weight: 600;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
             font-size: 0.9rem;
+            color: #7c8ba1;
         }
 
         .upload-area {
@@ -341,7 +360,6 @@
             border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            /* sticky 제거하고 일반 positioning 사용 */
             position: relative;
         }
 
@@ -356,9 +374,7 @@
             position: relative;
             overflow: hidden;
             transition: all 0.5s ease;
-            /* 반응형 높이 - 내용에 따라 자동 조정 */
             min-height: 500px;
-            /* 고정 높이 제거하고 최소 높이만 설정 */
         }
 
         /* 감정별 카드 테마 */
@@ -464,10 +480,8 @@
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(255,255,255,0.3);
-            /* 줄바꿈 보존 - 키 기능! */
             white-space: pre-wrap;
             word-wrap: break-word;
-            /* 긴 단어 자동 줄바꿈 */
             overflow-wrap: break-word;
         }
 
@@ -481,7 +495,6 @@
         }
 
         .download-section {
-            /* 왜쪽 열에 배치되도록 변경 */
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
             border-radius: 24px;
@@ -520,7 +533,6 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            /* 최소 너비 설정 */
             min-width: 120px;
             justify-content: center;
         }
@@ -575,7 +587,6 @@
             border-left: 4px solid #4299e1;
         }
 
-        /* 줄바꿈 가이드 스타일 */
         .line-break-guide {
             margin-top: 8px;
             padding: 8px 16px;
@@ -592,14 +603,24 @@
                 grid-template-columns: 1fr;
                 gap: 30px;
                 max-width: 600px;
+                /* 모바일에서 순서: 입력 → 미리보기 → 다운로드 */
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* 모바일 순서 조정 */
+            .input-section {
+                order: 1;
+                margin-bottom: 20px;
             }
             
             .card-preview {
-                order: -1;
+                order: 2;
+                margin-bottom: 20px;
             }
             
-            .left-column {
-                order: 1;
+            .download-section {
+                order: 3;
             }
         }
 
@@ -609,10 +630,6 @@
             }
             
             .container {
-                gap: 20px;
-            }
-            
-            .left-column {
                 gap: 20px;
             }
             
@@ -632,24 +649,6 @@
             .theme-option {
                 height: 50px;
                 font-size: 0.75rem;
-            }
-            
-            .upload-options {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .upload-btn {
-                max-width: none;
-                flex-direction: row;
-                justify-content: center;
-                padding: 16px;
-            }
-            
-            .upload-btn .icon {
-                margin-bottom: 0;
-                margin-right: 8px;
-                font-size: 1.5rem;
             }
             
             .camera-controls {
@@ -674,7 +673,6 @@
                 max-width: 300px;
             }
             
-            /* 모바일에서 카드 크기 조정 */
             .card {
                 padding: 24px;
                 min-height: 450px;
@@ -690,10 +688,6 @@
         @media (max-width: 480px) {
             .input-section, .download-section {
                 padding: 20px;
-            }
-            
-            .left-column {
-                gap: 16px;
             }
             
             .theme-options {
@@ -732,105 +726,97 @@
             <p>지금 이 순간의 감정을 카드로 만들어보세요</p>
         </div>
 
-        <div class="left-column">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="userName">👤 이름</label>
-                    <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
-                </div>
+        <!-- 📝 입력 섹션 (모바일에서 1번째) -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="userName">👤 이름</label>
+                <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
+            </div>
 
-                <div class="input-group">
-                    <label for="emotionName">💭 지금 이 순간의 감정</label>
-                    <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
-                    <div class="auto-theme-info">
-                        💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
-                    <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며&#10;좋아하는 음악을 들으며 여유로운 시간을 보내고 있어요&#10;&#10;줄바꿈을 사용해서 자세히 적어보세요!"></textarea>
-                    <div class="line-break-guide">
-                        ⌨️ 팁: Enter 키를 눌러 줄바꿈을 하면 카드에도 줄바꿈이 적용됩니다!
-                    </div>
-                </div>
-
-                <!-- 배경 테마 선택기 -->
-                <div class="input-group background-selector">
-                    <label>🎨 배경 테마 선택하기</label>
-                    <div class="theme-options">
-                        <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
-                        <div class="theme-option theme-love" data-theme="love">사랑</div>
-                        <div class="theme-option theme-calm" data-theme="calm">평온</div>
-                        <div class="theme-option theme-energy" data-theme="energy">활기</div>
-                        <div class="theme-option theme-nature" data-theme="nature">자연</div>
-                        <div class="theme-option theme-creative" data-theme="creative">창의</div>
-                        <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
-                        <div class="theme-option theme-cool" data-theme="cool">시원함</div>
-                        <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
-                        <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>📸 지금 이 순간의 사진 추가하기</label>
-                    
-                    <div class="upload-options">
-                        <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
-                            <div class="icon">📁</div>
-                            <div class="text">파일 선택</div>
-                        </div>
-                        <div class="upload-btn" onclick="startCamera()">
-                            <div class="icon">📷</div>
-                            <div class="text">사진 촬영</div>
-                        </div>
-                    </div>
-
-                    <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-                        <div class="upload-icon">📸</div>
-                        <div class="upload-text">지금 이 순간의 사진을 업로드하거나 촬영하세요</div>
-                        <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
-                        <input type="file" id="imageInput" accept="image/*">
-                    </div>
-
-                    <div class="camera-section" id="cameraSection">
-                        <div class="camera-container">
-                            <video id="cameraVideo" autoplay muted playsinline></video>
-                        </div>
-                        <div class="camera-controls">
-                            <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
-                                🔄 카메라 전환
-                            </button>
-                            <button class="camera-btn btn-capture" onclick="capturePhoto()">
-                                📸 사진 찍기
-                            </button>
-                            <button class="camera-btn btn-cancel" onclick="stopCamera()">
-                                ❌ 취소
-                            </button>
-                        </div>
-                    </div>
-
-                    <canvas id="capturedCanvas"></canvas>
-                    <img id="previewImage" class="preview-image" style="display: none;">
+            <div class="input-group">
+                <label for="emotionName">💭 지금 이 순간의 감정</label>
+                <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
+                <div class="auto-theme-info">
+                    💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
                 </div>
             </div>
 
-            <div class="download-section">
-                <h3>💾 완성된 감정카드 다운로드</h3>
-                <div class="download-buttons">
-                    <button class="btn btn-reset" onclick="resetForm()">
-                        🔄 새로 작성
-                    </button>
-                    <button class="btn btn-primary" onclick="downloadCard('png')">
-                        📱 이미지 저장
-                    </button>
-                    <button class="btn btn-secondary" onclick="downloadCard('pdf')">
-                        📄 PDF 저장
-                    </button>
+            <div class="input-group">
+                <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
+                <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며&#10;좋아하는 음악을 들으며 여유로운 시간을 보내고 있어요&#10;&#10;줄바꿈을 사용해서 자세히 적어보세요!"></textarea>
+                <div class="line-break-guide">
+                    ⌨️ 팁: Enter 키를 눌러 줄바꿈을 하면 카드에도 줄바꿈이 적용됩니다!
                 </div>
+            </div>
+
+            <!-- 배경 테마 선택기 -->
+            <div class="input-group background-selector">
+                <label>🎨 배경 테마 선택하기</label>
+                <div class="theme-options">
+                    <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
+                    <div class="theme-option theme-love" data-theme="love">사랑</div>
+                    <div class="theme-option theme-calm" data-theme="calm">평온</div>
+                    <div class="theme-option theme-energy" data-theme="energy">활기</div>
+                    <div class="theme-option theme-nature" data-theme="nature">자연</div>
+                    <div class="theme-option theme-creative" data-theme="creative">창의</div>
+                    <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
+                    <div class="theme-option theme-cool" data-theme="cool">시원함</div>
+                    <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
+                    <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>📸 지금 이 순간의 사진 추가하기</label>
+                
+                <div class="upload-area" onclick="showImageOptions()">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">지금 이 순간의 사진을 추가하세요</div>
+                    <div class="upload-subtext">클릭하여 파일 선택 또는 사진 촬영 • 파일을 끌어다 놓기도 가능</div>
+                    <input type="file" id="imageInput" accept="image/*">
+                </div>
+
+                <!-- 이미지 옵션 메뉴 -->
+                <div class="image-options-menu" id="imageOptionsMenu" style="display: none;">
+                    <div class="option-item" onclick="selectFile()">
+                        <div class="option-icon">📁</div>
+                        <div class="option-text">
+                            <div class="option-title">파일 선택</div>
+                            <div class="option-desc">갤러리에서 사진 선택</div>
+                        </div>
+                    </div>
+                    <div class="option-item" onclick="startCamera()">
+                        <div class="option-icon">📷</div>
+                        <div class="option-text">
+                            <div class="option-title">사진 촬영</div>
+                            <div class="option-desc">카메라로 바로 촬영</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="camera-section" id="cameraSection">
+                    <div class="camera-container">
+                        <video id="cameraVideo" autoplay muted playsinline></video>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
+                            🔄 카메라 전환
+                        </button>
+                        <button class="camera-btn btn-capture" onclick="capturePhoto()">
+                            📸 사진 찍기
+                        </button>
+                        <button class="camera-btn btn-cancel" onclick="stopCamera()">
+                            ❌ 취소
+                        </button>
+                    </div>
+                </div>
+
+                <canvas id="capturedCanvas"></canvas>
+                <img id="previewImage" class="preview-image" style="display: none;">
             </div>
         </div>
 
+        <!-- 🎨 카드 미리보기 (모바일에서 2번째) -->
         <div class="card-preview">
             <div class="card" id="emotionCard">
                 <div class="placeholder-image" id="cardImageContainer">
@@ -840,6 +826,22 @@
                 <div class="card-name" id="cardName">이름을 입력해주세요</div>
                 <div class="card-situation" id="cardSituation">지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요</div>
                 <div class="card-date" id="cardDate"></div>
+            </div>
+        </div>
+
+        <!-- 💾 다운로드 섹션 (모바일에서 3번째) -->
+        <div class="download-section">
+            <h3>💾 완성된 감정카드 다운로드</h3>
+            <div class="download-buttons">
+                <button class="btn btn-reset" onclick="resetForm()">
+                    🔄 새로 작성
+                </button>
+                <button class="btn btn-primary" onclick="downloadCard('png')">
+                    📱 이미지 저장
+                </button>
+                <button class="btn btn-secondary" onclick="downloadCard('pdf')">
+                    📄 PDF 저장
+                </button>
             </div>
         </div>
     </div>
@@ -953,7 +955,23 @@
 
         imageInput.addEventListener('change', handleImageUpload);
 
-        // 드래그 앤 드롭 처리
+        // 이미지 옵션 메뉴 표시
+        function showImageOptions() {
+            const menu = document.getElementById('imageOptionsMenu');
+            if (menu.style.display === 'none') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        }
+
+        // 파일 선택
+        function selectFile() {
+            document.getElementById('imageInput').click();
+            document.getElementById('imageOptionsMenu').style.display = 'none';
+        }
+
+        // 드래그 앤 드롭 처리 (업로드 영역에만 적용)
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('dragover');
@@ -971,6 +989,8 @@
                 imageInput.files = files;
                 handleImageUpload();
             }
+            // 메뉴 숨기기
+            document.getElementById('imageOptionsMenu').style.display = 'none';
         });
 
         function handleImageUpload() {
@@ -981,6 +1001,8 @@
                     applyImageToCard(e.target.result);
                 };
                 reader.readAsDataURL(file);
+                // 메뉴 숨기기
+                document.getElementById('imageOptionsMenu').style.display = 'none';
             }
         }
 
@@ -996,6 +1018,9 @@
 
         // 카메라 기능 - 간단 버전
         async function startCamera() {
+            // 메뉴 숨기기
+            document.getElementById('imageOptionsMenu').style.display = 'none';
+            
             try {
                 const constraints = {
                     video: {
@@ -1132,6 +1157,9 @@
                 // 카메라 종료 (실행 중인 경우)
                 stopCamera();
 
+                // 메뉴 숨기기
+                document.getElementById('imageOptionsMenu').style.display = 'none';
+
                 // 성공 메시지
                 alert('✨ 새로운 순간감정카드를 작성할 준비가 완료되었습니다!');
 
@@ -1219,6 +1247,16 @@
         window.addEventListener('beforeunload', () => {
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // 외부 클릭 시 메뉴 닫기
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('imageOptionsMenu');
+            const uploadArea = document.querySelector('.upload-area');
+            
+            if (!uploadArea.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
             }
         });
     </script>
