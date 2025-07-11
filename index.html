@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>감정카드 메이커</title>
+    <title>순간감정카드 메이커</title>
     <style>
         * {
             margin: 0;
@@ -604,8 +604,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✨ 감정카드 메이커</h1>
-            <p>나만의 특별한 감정카드를 만들어보세요</p>
+            <h1>✨ 순간감정카드 메이커</h1>
+            <p>특별한 순간의 감정을 카드로 만들어보세요</p>
         </div>
 
         <div class="input-section">
@@ -615,7 +615,7 @@
             </div>
 
             <div class="input-group">
-                <label for="emotionName">💭 감정의 이름</label>
+                <label for="emotionName">💭 그 순간의 감정</label>
                 <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
                 <div class="auto-theme-info">
                     💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
@@ -623,8 +623,8 @@
             </div>
 
             <div class="input-group">
-                <label for="situation">📝 언제 이런 감정을 느끼나요?</label>
-                <textarea id="situation" placeholder="예: 친구들과 함께 놀 때, 좋은 성적을 받았을 때..."></textarea>
+                <label for="situation">📝 언제, 어디서 이런 감정을 느꼈나요?</label>
+                <textarea id="situation" placeholder="예: 친구들과 놀이공원에서 롤러코스터를 탔을 때, 도서관에서 좋아하는 책을 읽었을 때..."></textarea>
             </div>
 
             <!-- 배경 테마 선택기 -->
@@ -645,7 +645,7 @@
             </div>
 
             <div class="input-group">
-                <label>🎨 나만의 그림 추가하기</label>
+                <label>🎨 그 순간의 사진 추가하기</label>
                 
                 <div class="upload-options">
                     <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
@@ -660,7 +660,7 @@
 
                 <div class="upload-area" onclick="document.getElementById('imageInput').click()">
                     <div class="upload-icon">📸</div>
-                    <div class="upload-text">그림을 업로드하거나 사진을 촬영하세요</div>
+                    <div class="upload-text">그 순간의 사진을 업로드하거나 촬영하세요</div>
                     <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
                     <input type="file" id="imageInput" accept="image/*">
                 </div>
@@ -690,11 +690,11 @@
         <div class="card-preview">
             <div class="card" id="emotionCard">
                 <div class="placeholder-image" id="cardImageContainer">
-                    <span>그림을 업로드해주세요</span>
+                    <span>사진을 업로드해주세요</span>
                 </div>
-                <div class="card-emotion" id="cardEmotion">감정의 이름</div>
+                <div class="card-emotion" id="cardEmotion">그 순간의 감정</div>
                 <div class="card-name" id="cardName">이름을 입력해주세요</div>
-                <div class="card-situation" id="cardSituation">언제 이런 감정을 느끼는지 적어보세요</div>
+                <div class="card-situation" id="cardSituation">언제, 어디서 이런 감정을 느꼈는지 적어보세요</div>
                 <div class="card-date" id="cardDate"></div>
             </div>
         </div>
@@ -792,7 +792,7 @@
         });
 
         document.getElementById('emotionName').addEventListener('input', function() {
-            const text = this.value || '감정의 이름';
+            const text = this.value || '그 순간의 감정';
             document.getElementById('cardEmotion').textContent = text;
             
             // 수동 선택하지 않은 경우에만 자동 테마 적용
@@ -805,7 +805,7 @@
         });
 
         document.getElementById('situation').addEventListener('input', function() {
-            const text = this.value || '언제 이런 감정을 느끼는지 적어보세요';
+            const text = this.value || '언제, 어디서 이런 감정을 느꼈는지 적어보세요';
             document.getElementById('cardSituation').textContent = text;
         });
 
@@ -981,12 +981,12 @@
 
                 // 카드 내용 초기화
                 document.getElementById('cardName').textContent = '이름을 입력해주세요';
-                document.getElementById('cardEmotion').textContent = '감정의 이름';
-                document.getElementById('cardSituation').textContent = '언제 이런 감정을 느끼는지 적어보세요';
+                document.getElementById('cardEmotion').textContent = '그 순간의 감정';
+                document.getElementById('cardSituation').textContent = '언제, 어디서 이런 감정을 느꼈는지 적어보세요';
 
                 // 이미지 초기화
                 document.getElementById('previewImage').style.display = 'none';
-                document.getElementById('cardImageContainer').innerHTML = '<span>그림을 업로드해주세요</span>';
+                document.getElementById('cardImageContainer').innerHTML = '<span>사진을 업로드해주세요</span>';
 
                 // 테마 초기화
                 isManualThemeSelection = false;
@@ -997,7 +997,7 @@
                 stopCamera();
 
                 // 성공 메시지
-                alert('✨ 새로운 감정카드를 작성할 준비가 완료되었습니다!');
+                alert('✨ 새로운 순간감정카드를 작성할 준비가 완료되었습니다!');
 
                 // 맨 위로 스크롤
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1018,7 +1018,7 @@
 
                 if (format === 'png') {
                     const link = document.createElement('a');
-                    link.download = `감정카드_${document.getElementById('emotionName').value || '나의감정'}.png`;
+                    link.download = `순간감정카드_${document.getElementById('emotionName').value || '나의감정'}.png`;
                     link.href = canvas.toDataURL();
                     link.click();
                 } else if (format === 'pdf') {
@@ -1030,7 +1030,7 @@
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
                     
                     pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                    pdf.save(`감정카드_${document.getElementById('emotionName').value || '나의감정'}.pdf`);
+                    pdf.save(`순간감정카드_${document.getElementById('emotionName').value || '나의감정'}.pdf`);
                 }
             } catch (error) {
                 console.error('Download error:', error);
