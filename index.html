@@ -1004,6 +1004,36 @@
             }
         }
 
+        // 파일명 생성 함수 개선
+        function generateFileName(format) {
+            // 현재 날짜를 YYYY-MM-DD 형식으로 포맷
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0]; // 2025-07-11 형식
+            
+            // 사용자 입력값 가져오기
+            const userName = document.getElementById('userName').value.trim();
+            const emotionName = document.getElementById('emotionName').value.trim();
+            
+            // 기본값 설정
+            const safeUserName = userName || '익명';
+            const safeEmotionName = emotionName || '감정';
+            
+            // 파일명에 사용할 수 없는 문자 제거 (Windows/Mac/Linux 호환)
+            function sanitizeFileName(str) {
+                return str.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_');
+            }
+            
+            // 각 구성요소 정리
+            const cleanUserName = sanitizeFileName(safeUserName);
+            const cleanEmotionName = sanitizeFileName(safeEmotionName);
+            
+            // 파일명 구성: 날짜_이름_감정_타입.확장자
+            const baseName = `${dateString}_${cleanUserName}_${cleanEmotionName}_순간감정카드`;
+            const extension = format === 'pdf' ? 'pdf' : 'png';
+            
+            return `${baseName}.${extension}`;
+        }
+
         // 다운로드 기능
         async function downloadCard(format) {
             const card = document.getElementById('emotionCard');
@@ -1016,11 +1046,18 @@
                     allowTaint: true
                 });
 
+                // 개선된 파일명 생성
+                const fileName = generateFileName(format);
+
                 if (format === 'png') {
                     const link = document.createElement('a');
-                    link.download = `순간감정카드_${document.getElementById('emotionName').value || '나의감정'}.png`;
+                    link.download = fileName;
                     link.href = canvas.toDataURL();
                     link.click();
+                    
+                    // 성공 메시지에 파일명 포함
+                    alert(`📱 이미지가 "${fileName}"으로 저장되었습니다!`);
+                    
                 } else if (format === 'pdf') {
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF();
@@ -1030,8 +1067,12 @@
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
                     
                     pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                    pdf.save(`순간감정카드_${document.getElementById('emotionName').value || '나의감정'}.pdf`);
+                    pdf.save(fileName);
+                    
+                    // 성공 메시지에 파일명 포함
+                    alert(`📄 PDF가 "${fileName}"으로 저장되었습니다!`);
                 }
+                
             } catch (error) {
                 console.error('Download error:', error);
                 alert('다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');
