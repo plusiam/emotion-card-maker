@@ -323,6 +323,12 @@
             box-shadow: 0 6px 16px rgba(0, 184, 148, 0.3);
         }
 
+        .btn-switch {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+
         .btn-cancel {
             background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
             color: white;
@@ -542,6 +548,7 @@
             .camera-btn {
                 width: 200px;
                 justify-content: center;
+                margin-bottom: 8px;
             }
             
             .crop-container {
@@ -621,6 +628,9 @@
                         <video id="cameraVideo" autoplay muted playsinline></video>
                     </div>
                     <div class="camera-controls">
+                        <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
+                            🔄 카메라 전환
+                        </button>
                         <button class="camera-btn btn-capture" onclick="capturePhoto()">
                             📸 사진 찍기
                         </button>
@@ -713,6 +723,7 @@
         let isDragging = false;
         let lastX = 0;
         let lastY = 0;
+        let currentFacingMode = 'environment'; // 기본값을 후면 카메라로 변경
 
         // 입력 필드 이벤트 리스너
         document.getElementById('userName').addEventListener('input', function() {
@@ -785,7 +796,7 @@
                     video: {
                         width: { ideal: 1280 },
                         height: { ideal: 720 },
-                        facingMode: 'user' // 전면 카메라 우선
+                        facingMode: currentFacingMode
                     }
                 };
 
@@ -794,6 +805,7 @@
                 video.srcObject = cameraStream;
                 
                 document.getElementById('cameraSection').style.display = 'block';
+                updateSwitchButton();
                 
                 // 스크롤을 카메라 섹션으로 이동
                 document.getElementById('cameraSection').scrollIntoView({ 
@@ -803,6 +815,49 @@
             } catch (error) {
                 console.error('카메라 접근 오류:', error);
                 alert('카메라에 접근할 수 없습니다. 브라우저 설정을 확인해주세요.');
+            }
+        }
+
+        async function switchCamera() {
+            // 현재 스트림 종료
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+
+            // 카메라 모드 전환
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+
+            try {
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: currentFacingMode
+                    }
+                };
+
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = cameraStream;
+                
+                updateSwitchButton();
+
+            } catch (error) {
+                console.error('카메라 전환 오류:', error);
+                alert('카메라를 전환할 수 없습니다. 다른 카메라가 사용 가능한지 확인해주세요.');
+                
+                // 원래 모드로 되돌리기
+                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+                startCamera();
+            }
+        }
+
+        function updateSwitchButton() {
+            const switchBtn = document.getElementById('switchBtn');
+            if (currentFacingMode === 'user') {
+                switchBtn.innerHTML = '📷 후면 카메라';
+            } else {
+                switchBtn.innerHTML = '🤳 전면 카메라';
             }
         }
 
