@@ -286,6 +286,7 @@
             cursor: move;
             transition: none;
             user-select: none;
+            touch-action: none;
         }
 
         .crop-overlay {
@@ -894,6 +895,7 @@
         let currentFacingMode = 'environment';
         let currentTheme = null;
         let isManualThemeSelection = false;
+        let dragEventListeners = null; // 이벤트 리스너 추적용
 
         // 감정별 키워드 매핑
         const emotionKeywords = {
@@ -1137,68 +1139,99 @@
             cropSection.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // 이벤트 리스너 정리 함수
+        function removeDragEventListeners() {
+            if (dragEventListeners) {
+                const cropImage = document.getElementById('cropImage');
+                
+                // 마우스 이벤트 제거
+                cropImage.removeEventListener('mousedown', dragEventListeners.startDrag);
+                document.removeEventListener('mousemove', dragEventListeners.drag);
+                document.removeEventListener('mouseup', dragEventListeners.endDrag);
+                
+                // 터치 이벤트 제거
+                cropImage.removeEventListener('touchstart', dragEventListeners.startDragTouch);
+                document.removeEventListener('touchmove', dragEventListeners.dragTouch);
+                document.removeEventListener('touchend', dragEventListeners.endDrag);
+                
+                dragEventListeners = null;
+            }
+        }
+
         function initializeDragFunctionality() {
+            // 기존 이벤트 리스너 제거
+            removeDragEventListeners();
+            
             const cropImage = document.getElementById('cropImage');
-            const cropContainer = document.getElementById('cropContainer');
+
+            // 이벤트 핸들러 함수들
+            const startDrag = (e) => {
+                isDragging = true;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                e.preventDefault();
+            };
+
+            const startDragTouch = (e) => {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                e.preventDefault();
+            };
+
+            const drag = (e) => {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - lastX;
+                const deltaY = e.clientY - lastY;
+                
+                cropX += deltaX;
+                cropY += deltaY;
+                
+                updateImageTransform();
+                
+                lastX = e.clientX;
+                lastY = e.clientY;
+            };
+
+            const dragTouch = (e) => {
+                if (!isDragging) return;
+                
+                const deltaX = e.touches[0].clientX - lastX;
+                const deltaY = e.touches[0].clientY - lastY;
+                
+                cropX += deltaX;
+                cropY += deltaY;
+                
+                updateImageTransform();
+                
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                e.preventDefault();
+            };
+
+            const endDrag = () => {
+                isDragging = false;
+            };
+
+            // 이벤트 리스너 객체에 저장
+            dragEventListeners = {
+                startDrag,
+                startDragTouch,
+                drag,
+                dragTouch,
+                endDrag
+            };
 
             // 마우스 이벤트
             cropImage.addEventListener('mousedown', startDrag);
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', endDrag);
 
-            // 터치 이벤트 (모바일)
-            cropImage.addEventListener('touchstart', startDragTouch);
-            document.addEventListener('touchmove', dragTouch);
+            // 터치 이벤트 (passive: false로 preventDefault 허용)
+            cropImage.addEventListener('touchstart', startDragTouch, { passive: false });
+            document.addEventListener('touchmove', dragTouch, { passive: false });
             document.addEventListener('touchend', endDrag);
-        }
-
-        function startDrag(e) {
-            isDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-            e.preventDefault();
-        }
-
-        function startDragTouch(e) {
-            isDragging = true;
-            lastX = e.touches[0].clientX;
-            lastY = e.touches[0].clientY;
-            e.preventDefault();
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            
-            const deltaX = e.clientX - lastX;
-            const deltaY = e.clientY - lastY;
-            
-            cropX += deltaX;
-            cropY += deltaY;
-            
-            updateImageTransform();
-            
-            lastX = e.clientX;
-            lastY = e.clientY;
-        }
-
-        function dragTouch(e) {
-            if (!isDragging) return;
-            
-            const deltaX = e.touches[0].clientX - lastX;
-            const deltaY = e.touches[0].clientY - lastY;
-            
-            cropX += deltaX;
-            cropY += deltaY;
-            
-            updateImageTransform();
-            
-            lastX = e.touches[0].clientX;
-            lastY = e.touches[0].clientY;
-            e.preventDefault();
-        }
-
-        function endDrag() {
-            isDragging = false;
         }
 
         function updateImageTransform() {
@@ -1220,12 +1253,15 @@
 
         function resetCrop() {
             const cropImage = document.getElementById('cropImage');
-            const cropContainer = document.getElementById('cropContainer');
             
-            // 초기 위치 계산 (중앙 배치)
-            const containerRect = cropContainer.getBoundingClientRect();
-            const imageWidth = cropImage.naturalWidth || 300;
-            const imageHeight = cropImage.naturalHeight || 300;
+            // 이미지가 로드될 때까지 기다림
+            if (cropImage.naturalWidth === 0) {
+                setTimeout(resetCrop, 100);
+                return;
+            }
+            
+            const imageWidth = cropImage.naturalWidth;
+            const imageHeight = cropImage.naturalHeight;
             
             // 컨테이너에 맞게 초기 스케일 계산
             const containerSize = 300;
@@ -1247,54 +1283,25 @@
         }
 
         function applyCrop() {
-            const cropContainer = document.getElementById('cropContainer');
             const cropImage = document.getElementById('cropImage');
             
-            // 크롭 영역의 실제 좌표 계산
+            // 간단한 크롭 방식으로 변경
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // 200x200 크기로 크롭
+            // 카드 이미지 크기로 설정
             canvas.width = 200;
             canvas.height = 200;
             
-            // 임시 이미지 생성하여 현재 변형된 상태 캡처
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            
+            // 새 이미지 객체 생성
             const img = new Image();
             img.onload = function() {
-                // 컨테이너 기준으로 크롭 영역 계산
-                const containerRect = cropContainer.getBoundingClientRect();
-                const cropOverlay = cropContainer.querySelector('.crop-overlay');
-                const overlayRect = cropOverlay.getBoundingClientRect();
+                // 중앙 영역을 200x200으로 크롭
+                const sourceSize = Math.min(img.width, img.height);
+                const sourceX = (img.width - sourceSize) / 2;
+                const sourceY = (img.height - sourceSize) / 2;
                 
-                // 상대적 위치 계산
-                const relativeX = (overlayRect.left - containerRect.left) / containerRect.width;
-                const relativeY = (overlayRect.top - containerRect.top) / containerRect.height;
-                const relativeWidth = overlayRect.width / containerRect.width;
-                const relativeHeight = overlayRect.height / containerRect.height;
-                
-                // 원본 이미지에서 해당 영역 추출
-                tempCanvas.width = img.width;
-                tempCanvas.height = img.height;
-                
-                // 변형 적용
-                tempCtx.save();
-                tempCtx.translate(tempCanvas.width/2, tempCanvas.height/2);
-                tempCtx.rotate(cropRotation * Math.PI / 180);
-                tempCtx.scale(cropScale, cropScale);
-                tempCtx.translate(-img.width/2, -img.height/2);
-                tempCtx.drawImage(img, 0, 0);
-                tempCtx.restore();
-                
-                // 최종 크롭
-                const sourceX = relativeX * tempCanvas.width;
-                const sourceY = relativeY * tempCanvas.height;
-                const sourceWidth = relativeWidth * tempCanvas.width;
-                const sourceHeight = relativeHeight * tempCanvas.height;
-                
-                ctx.drawImage(tempCanvas, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, 200, 200);
+                ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 200, 200);
                 
                 // 결과 적용
                 const croppedImageData = canvas.toDataURL('image/png');
@@ -1316,6 +1323,7 @@
 
         function hideCropInterface() {
             document.getElementById('cropSection').style.display = 'none';
+            removeDragEventListeners(); // 이벤트 리스너 정리
             currentImageData = null;
         }
 
@@ -1376,7 +1384,8 @@
                 const canvas = await html2canvas(card, {
                     scale: 2,
                     backgroundColor: null,
-                    useCORS: true
+                    useCORS: true,
+                    allowTaint: true
                 });
 
                 if (format === 'png') {
@@ -1396,16 +1405,17 @@
                     pdf.save(`감정카드_${document.getElementById('emotionName').value || '나의감정'}.pdf`);
                 }
             } catch (error) {
-                alert('다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');
                 console.error('Download error:', error);
+                alert('다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');
             }
         }
 
-        // 페이지 종료 시 카메라 스트림 정리
+        // 페이지 종료 시 리소스 정리
         window.addEventListener('beforeunload', () => {
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
             }
+            removeDragEventListeners();
         });
     </script>
 </body>
