@@ -46,6 +46,13 @@
             font-size: 1.1rem;
         }
 
+        /* 왼쪽 열: 입력 섹션 + 다운로드 섹션 */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
         .input-section {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -334,8 +341,8 @@
             border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 20px;
+            /* sticky 제거하고 일반 positioning 사용 */
+            position: relative;
         }
 
         .card {
@@ -474,23 +481,18 @@
         }
 
         .download-section {
-            grid-column: 1 / -1;
-            /* 왜쪽 정렬로 변경 */
-            text-align: left;
-            margin-top: 40px;
-            /* 충분한 마진 확보 */
-            padding: 20px;
+            /* 왜쪽 열에 배치되도록 변경 */
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
             border-radius: 24px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.2);
         }
 
         .download-buttons {
             display: flex;
-            gap: 16px;
-            /* 왜쪽 정렬로 변경 */
+            gap: 12px;
             justify-content: flex-start;
             flex-wrap: wrap;
             align-items: center;
@@ -498,7 +500,7 @@
 
         .download-section h3 {
             color: #2c3e50;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 16px;
             display: flex;
@@ -507,10 +509,10 @@
         }
 
         .btn {
-            padding: 14px 28px;
+            padding: 12px 24px;
             border: none;
             border-radius: 50px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -519,7 +521,7 @@
             align-items: center;
             gap: 8px;
             /* 최소 너비 설정 */
-            min-width: 140px;
+            min-width: 120px;
             justify-content: center;
         }
 
@@ -594,7 +596,10 @@
             
             .card-preview {
                 order: -1;
-                position: static;
+            }
+            
+            .left-column {
+                order: 1;
             }
         }
 
@@ -604,6 +609,10 @@
             }
             
             .container {
+                gap: 20px;
+            }
+            
+            .left-column {
                 gap: 20px;
             }
             
@@ -683,6 +692,10 @@
                 padding: 20px;
             }
             
+            .left-column {
+                gap: 16px;
+            }
+            
             .theme-options {
                 grid-template-columns: 1fr 1fr;
             }
@@ -699,6 +712,16 @@
             .card-situation {
                 font-size: 1rem;
             }
+            
+            .download-buttons {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
         }
     </style>
 </head>
@@ -709,85 +732,102 @@
             <p>지금 이 순간의 감정을 카드로 만들어보세요</p>
         </div>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="userName">👤 이름</label>
-                <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
-            </div>
-
-            <div class="input-group">
-                <label for="emotionName">💭 지금 이 순간의 감정</label>
-                <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
-                <div class="auto-theme-info">
-                    💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
+        <div class="left-column">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="userName">👤 이름</label>
+                    <input type="text" id="userName" placeholder="이름을 입력해주세요" maxlength="15">
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
-                <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며&#10;좋아하는 음악을 들으며 여유로운 시간을 보내고 있어요&#10;&#10;줄바꿈을 사용해서 자세히 적어보세요!"></textarea>
-                <div class="line-break-guide">
-                    ⌨️ 팁: Enter 키를 눌러 줄바꿈을 하면 카드에도 줄바꿈이 적용됩니다!
-                </div>
-            </div>
-
-            <!-- 배경 테마 선택기 -->
-            <div class="input-group background-selector">
-                <label>🎨 배경 테마 선택하기</label>
-                <div class="theme-options">
-                    <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
-                    <div class="theme-option theme-love" data-theme="love">사랑</div>
-                    <div class="theme-option theme-calm" data-theme="calm">평온</div>
-                    <div class="theme-option theme-energy" data-theme="energy">활기</div>
-                    <div class="theme-option theme-nature" data-theme="nature">자연</div>
-                    <div class="theme-option theme-creative" data-theme="creative">창의</div>
-                    <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
-                    <div class="theme-option theme-cool" data-theme="cool">시원함</div>
-                    <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
-                    <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>📸 지금 이 순간의 사진 추가하기</label>
-                
-                <div class="upload-options">
-                    <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
-                        <div class="icon">📁</div>
-                        <div class="text">파일 선택</div>
-                    </div>
-                    <div class="upload-btn" onclick="startCamera()">
-                        <div class="icon">📷</div>
-                        <div class="text">사진 촬영</div>
+                <div class="input-group">
+                    <label for="emotionName">💭 지금 이 순간의 감정</label>
+                    <input type="text" id="emotionName" placeholder="예: 기쁨, 설렘, 아쉬움..." maxlength="20">
+                    <div class="auto-theme-info">
+                        💡 감정을 입력하면 어울리는 배경이 자동으로 선택됩니다!
                     </div>
                 </div>
 
-                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-                    <div class="upload-icon">📸</div>
-                    <div class="upload-text">지금 이 순간의 사진을 업로드하거나 촬영하세요</div>
-                    <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
-                    <input type="file" id="imageInput" accept="image/*">
-                </div>
-
-                <div class="camera-section" id="cameraSection">
-                    <div class="camera-container">
-                        <video id="cameraVideo" autoplay muted playsinline></video>
-                    </div>
-                    <div class="camera-controls">
-                        <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
-                            🔄 카메라 전환
-                        </button>
-                        <button class="camera-btn btn-capture" onclick="capturePhoto()">
-                            📸 사진 찍기
-                        </button>
-                        <button class="camera-btn btn-cancel" onclick="stopCamera()">
-                            ❌ 취소
-                        </button>
+                <div class="input-group">
+                    <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
+                    <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며&#10;좋아하는 음악을 들으며 여유로운 시간을 보내고 있어요&#10;&#10;줄바꿈을 사용해서 자세히 적어보세요!"></textarea>
+                    <div class="line-break-guide">
+                        ⌨️ 팁: Enter 키를 눌러 줄바꿈을 하면 카드에도 줄바꿈이 적용됩니다!
                     </div>
                 </div>
 
-                <canvas id="capturedCanvas"></canvas>
-                <img id="previewImage" class="preview-image" style="display: none;">
+                <!-- 배경 테마 선택기 -->
+                <div class="input-group background-selector">
+                    <label>🎨 배경 테마 선택하기</label>
+                    <div class="theme-options">
+                        <div class="theme-option theme-joy" data-theme="joy">기쁨</div>
+                        <div class="theme-option theme-love" data-theme="love">사랑</div>
+                        <div class="theme-option theme-calm" data-theme="calm">평온</div>
+                        <div class="theme-option theme-energy" data-theme="energy">활기</div>
+                        <div class="theme-option theme-nature" data-theme="nature">자연</div>
+                        <div class="theme-option theme-creative" data-theme="creative">창의</div>
+                        <div class="theme-option theme-warm" data-theme="warm">따뜻함</div>
+                        <div class="theme-option theme-cool" data-theme="cool">시원함</div>
+                        <div class="theme-option theme-sunset" data-theme="sunset">노을</div>
+                        <div class="theme-option theme-ocean" data-theme="ocean">바다</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>📸 지금 이 순간의 사진 추가하기</label>
+                    
+                    <div class="upload-options">
+                        <div class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                            <div class="icon">📁</div>
+                            <div class="text">파일 선택</div>
+                        </div>
+                        <div class="upload-btn" onclick="startCamera()">
+                            <div class="icon">📷</div>
+                            <div class="text">사진 촬영</div>
+                        </div>
+                    </div>
+
+                    <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                        <div class="upload-icon">📸</div>
+                        <div class="upload-text">지금 이 순간의 사진을 업로드하거나 촬영하세요</div>
+                        <div class="upload-subtext">JPG, PNG 파일을 끌어다 놓거나 위 버튼을 클릭하세요</div>
+                        <input type="file" id="imageInput" accept="image/*">
+                    </div>
+
+                    <div class="camera-section" id="cameraSection">
+                        <div class="camera-container">
+                            <video id="cameraVideo" autoplay muted playsinline></video>
+                        </div>
+                        <div class="camera-controls">
+                            <button class="camera-btn btn-switch" onclick="switchCamera()" id="switchBtn">
+                                🔄 카메라 전환
+                            </button>
+                            <button class="camera-btn btn-capture" onclick="capturePhoto()">
+                                📸 사진 찍기
+                            </button>
+                            <button class="camera-btn btn-cancel" onclick="stopCamera()">
+                                ❌ 취소
+                            </button>
+                        </div>
+                    </div>
+
+                    <canvas id="capturedCanvas"></canvas>
+                    <img id="previewImage" class="preview-image" style="display: none;">
+                </div>
+            </div>
+
+            <div class="download-section">
+                <h3>💾 완성된 감정카드 다운로드</h3>
+                <div class="download-buttons">
+                    <button class="btn btn-reset" onclick="resetForm()">
+                        🔄 새로 작성
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadCard('png')">
+                        📱 이미지 저장
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadCard('pdf')">
+                        📄 PDF 저장
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -800,21 +840,6 @@
                 <div class="card-name" id="cardName">이름을 입력해주세요</div>
                 <div class="card-situation" id="cardSituation">지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요</div>
                 <div class="card-date" id="cardDate"></div>
-            </div>
-        </div>
-
-        <div class="download-section">
-            <h3>💾 완성된 감정카드 다운로드</h3>
-            <div class="download-buttons">
-                <button class="btn btn-reset" onclick="resetForm()">
-                    🔄 새로 작성하기
-                </button>
-                <button class="btn btn-primary" onclick="downloadCard('png')">
-                    📱 이미지로 저장
-                </button>
-                <button class="btn btn-secondary" onclick="downloadCard('pdf')">
-                    📄 PDF로 저장
-                </button>
             </div>
         </div>
     </div>
