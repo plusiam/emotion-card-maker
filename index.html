@@ -85,8 +85,9 @@
 
         .input-group textarea {
             resize: vertical;
-            height: 100px;
+            height: 120px;
             font-family: inherit;
+            line-height: 1.6;
         }
 
         /* 배경 테마 선택기 스타일 */
@@ -348,6 +349,9 @@
             position: relative;
             overflow: hidden;
             transition: all 0.5s ease;
+            /* 반응형 높이 - 내용에 따라 자동 조정 */
+            min-height: 500px;
+            /* 고정 높이 제거하고 최소 높이만 설정 */
         }
 
         /* 감정별 카드 테마 */
@@ -453,6 +457,11 @@
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+            /* 줄바꿈 보존 - 키 기능! */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            /* 긴 단어 자동 줄바꿈 */
+            overflow-wrap: break-word;
         }
 
         .card-date {
@@ -541,6 +550,17 @@
             border-left: 4px solid #4299e1;
         }
 
+        /* 줄바꿈 가이드 스타일 */
+        .line-break-guide {
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #f8f4e8 0%, #fcefd4 100%);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #8b6914;
+            border-left: 4px solid #f59e0b;
+        }
+
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
@@ -598,6 +618,17 @@
                 flex-direction: column;
                 align-items: center;
             }
+            
+            /* 모바일에서 카드 크기 조정 */
+            .card {
+                padding: 24px;
+                min-height: 450px;
+            }
+            
+            .card-image, .placeholder-image {
+                width: 150px;
+                height: 150px;
+            }
         }
     </style>
 </head>
@@ -624,7 +655,10 @@
 
             <div class="input-group">
                 <label for="situation">📝 지금 어디서, 무엇을 하며 이런 감정을 느끼고 있나요?</label>
-                <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며, 집에서 좋아하는 음악을 들으며..."></textarea>
+                <textarea id="situation" placeholder="예: 친구들과 카페에서 수다를 떨며&#10;좋아하는 음악을 들으며 여유로운 시간을 보내고 있어요&#10;&#10;줄바꿈을 사용해서 자세히 적어보세요!"></textarea>
+                <div class="line-break-guide">
+                    ⌨️ 팁: Enter 키를 눌러 줄바꿈을 하면 카드에도 줄바꿈이 적용됩니다!
+                </div>
             </div>
 
             <!-- 배경 테마 선택기 -->
@@ -804,8 +838,14 @@
             }
         });
 
+        // 줄바꿈 기능을 지원하는 상황 설명 이벤트 리스너
         document.getElementById('situation').addEventListener('input', function() {
-            const text = this.value || '지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요';
+            // 기본 텍스트 설정
+            const defaultText = '지금 어디서, 무엇을 하며 이런 감정을 느끼고 있는지 적어보세요';
+            const text = this.value || defaultText;
+            
+            // textContent 대신 직접 할당하여 줄바꿈 보존
+            // CSS의 white-space: pre-wrap과 함께 동작
             document.getElementById('cardSituation').textContent = text;
         });
 
